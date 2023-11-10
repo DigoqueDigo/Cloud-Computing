@@ -47,17 +47,17 @@ public class User {
                     if(login == 0){
                         showLoginMenu();
                         System.out.println("Opção: ");
-                        int choice = scanner.nextInt();
+                        String choice = scanner.next();
                         switch (choice) {
-                            case 1:
+                            case "1":
                                 registerUser();
                                 break;
-                            case 2:
+                            case "2":
                                 if(loginUser()){
                                     login = 1;
                                 }
                                 break;
-                            case 3:
+                            case "3":
                                 System.out.println("Adeus!");
                                 System.exit(0);
                             default:
@@ -68,15 +68,15 @@ public class User {
                     else{
                         showMenu();
                         System.out.println("Opção: ");
-                        int choice = scanner.nextInt();
+                        String choice = scanner.next();
                         switch (choice) {
-                            case 1:
+                            case "1":
                                 executeTask();
                                 break;
-                            case 2:
+                            case "2":
                                 checkServiceStatus();
                                 break;
-                            case 3:
+                            case "3":
                                 System.out.println("Adeus!");
                                 System.exit(0);
                             default:
@@ -98,7 +98,7 @@ public class User {
         }
 
         private void showMenu(){
-            System.out.println("\nBem-vindo! Escolha uma opção:");
+            System.out.println("\nBem-vindo!\nEscolha uma opção:");
             System.out.println("1. Executar tarefa");
             System.out.println("2. Consultar estado atual");
             System.out.println("3. Sair");
