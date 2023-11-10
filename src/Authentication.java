@@ -17,14 +17,19 @@ public class Authentication {
         return this.credenciais;
     }
 
-    public void registerUser(String username, String password) {
+    public boolean registerUser(String username, String password) {
         lock.lock();
         try{
-            credenciais.put(username, password);
+            if (!credenciais.containsKey(username)) {
+                credenciais.put(username, password);
+                return true;
+            }
         }
         finally {
             lock.unlock();
         }
+
+        return false;
     }
 
     public boolean authenticateUser(String username, String password) {

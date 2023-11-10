@@ -52,42 +52,45 @@ public class Server {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-                int pode_usar = 0;
-
                 while (true) {
                     String message = in.readLine();
                     String[] words = message.split(" ");
 
                     if (words[0].toUpperCase().equals("REGISTER")) {
-                        contas.registerUser(words[1], words[2]);
-                        out.println("Registado com sucesso!");
+                        if(contas.registerUser(words[1], words[2])){
+                            out.println("Registado com sucesso!");
+                        }
+                        else{
+                            out.println("Já existe um usuário com esse nome! Tente novamente.");
+                        }
                         out.flush();
                     }
 
                     else if (words[0].toUpperCase().equals("LOGIN")) {
                         if (contas.authenticateUser(words[1], words[2])) {
-                            pode_usar = 1;
                             out.println("Login com sucesso!");
                             out.flush();
                         }
+                        else{
+                            out.println("Credenciais erradas! Tente novamente.");
+                        }
                     }
 
-                    if (pode_usar == 1) {
-                        if (words[0].toUpperCase().equals("EXECUTE")) {
-                            String taskCode = words[1];
-                            int requiredMemory = taskCode.length();
+                    else if (words[0].toUpperCase().equals("EXECUTE")) {
+                        String taskCode = words[1];
+                        int requiredMemory = taskCode.length();
 
-                            if (requiredMemory <= memory) {
-                                Task task = new Task(taskCode, requiredMemory);
-                                taskQueue.offer(task);
+                        if (requiredMemory <= memory) {
+                            Task task = new Task(taskCode, requiredMemory);
+                            taskQueue.offer(task);
 
-                                out.println("Tarefa em espera para execução.");
-                                out.flush();
-                            } else {
-                                out.println("Erro: Memória insuficiente para executar a tarefa.");
-                                out.flush();
-                            }
-                        }
+                            out.println("Tarefa em espera para execução.");
+                            out.flush();
+                        } else {
+                            out.println("Erro: Memória insuficiente para executar a tarefa.");
+                            out.flush();
+                          }
+
                     }
 
                     Task task = taskQueue.poll();

@@ -40,43 +40,68 @@ public class User {
 
         @Override
         public void run() {
-            int teste = 0;
+            int login = 0;
             try {
                 while (true) {
-                    showMenu();
 
-                    System.out.println("Opção: ");
-                    int choice = scanner.nextInt();
-                    switch (choice) {
-                        case 1:
-                            registerUser();
-                            teste++;
-                            break;
-                        case 2:
-                            loginUser();
-                            teste++;
-                            break;
-                        case 3:
-                            executeTask();
-                            break;
-                        case 4:
-                            System.out.println("Adeus!");
-                            System.exit(0);
-                        default:
-                            System.out.println("Opção inválida. Tente novamente.");
+                    if(login == 0){
+                        showLoginMenu();
+                        System.out.println("Opção: ");
+                        int choice = scanner.nextInt();
+                        switch (choice) {
+                            case 1:
+                                registerUser();
+                                break;
+                            case 2:
+                                if(loginUser()){
+                                    login = 1;
+                                }
+                                break;
+                            case 3:
+                                System.out.println("Adeus!");
+                                System.exit(0);
+                            default:
+                                System.out.println("Opção inválida. Tente novamente.");
+                        }
                     }
+
+                    else{
+                        showMenu();
+                        System.out.println("Opção: ");
+                        int choice = scanner.nextInt();
+                        switch (choice) {
+                            case 1:
+                                executeTask();
+                                break;
+                            case 2:
+                                checkServiceStatus();
+                                break;
+                            case 3:
+                                System.out.println("Adeus!");
+                                System.exit(0);
+                            default:
+                                System.out.println("Opção inválida. Tente novamente.");
+                        }
+                    }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        private void showMenu() {
+        private void showLoginMenu() {
             System.out.println("\nEscolha uma opção:");
             System.out.println("1. Registrar usuário");
             System.out.println("2. Fazer login");
-            System.out.println("3. Executar tarefa");
-            System.out.println("4. Sair");
+            System.out.println("3. Sair");
+        }
+
+        private void showMenu(){
+            System.out.println("\nBem-vindo! Escolha uma opção:");
+            System.out.println("1. Executar tarefa");
+            System.out.println("2. Consultar estado atual");
+            System.out.println("3. Sair");
         }
 
         private void registerUser() {
@@ -91,7 +116,7 @@ public class User {
             printServerResponse();
         }
 
-        private void loginUser() {
+        private boolean loginUser() {
             System.out.println("Insira o nome de usuário:");
             String username = scanner.next();
             System.out.println("Insira a senha:");
@@ -100,7 +125,7 @@ public class User {
             out.println("LOGIN " + username + " " + password);
             out.flush();
 
-            printServerResponse();
+            return printServerResponse().equals("Login com sucesso!");
         }
 
         private void executeTask() {
@@ -114,18 +139,27 @@ public class User {
             printServerResponse();
         }
 
-        private void printServerResponse() {
+        private void checkServiceStatus() {
+            out.println("STATUS");
+            out.flush();
+
+            printServerResponse();
+        }
+
+        private String printServerResponse() {
             try {
                 String receivedMessage;
                 while ((receivedMessage = in.readLine()) != null) {
                     System.out.println(receivedMessage);
-                    break;
+                    return receivedMessage;
                 }
 
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            return null;
         }
     }
 }
