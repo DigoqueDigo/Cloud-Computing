@@ -5,7 +5,7 @@ public class Example {
 
         try {
             // obter a tarefa de ficheiro, socket, etc...
-            byte[] job = new byte[5];
+            byte[] job = new byte[1];
 
             // executar a tarefa
             byte[] output = JobFunction.execute(job);

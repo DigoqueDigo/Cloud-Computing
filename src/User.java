@@ -32,22 +32,38 @@ public class User {
         @Override
         public void run() {
             try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream())); //leitor que serve para ler o que vem do outro lado
-                PrintWriter out = new PrintWriter(socket.getOutputStream()); //escritor para o servidor
-                BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in)); //leitor que serve para ler do terminal
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
-                while (true) {
-                    String reader = consoleReader.readLine();
-                    out.println(reader);
+                Thread serverReader = new Thread(() -> {
+                    try {
+                        String receivedMessage;
+                        while ((receivedMessage = in.readLine()) != null) {
+                            System.out.println(receivedMessage);
+                            if (receivedMessage.isEmpty()) {
+                                break;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                serverReader.start();
 
-                    String receivedMessage = in.readLine();
-                    System.out.println(receivedMessage);
+                String userInput;
+                while ((userInput = consoleReader.readLine()) != null) {
+                    out.println(userInput);
                 }
+
+                serverReader.join();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+
 
 }

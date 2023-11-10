@@ -10,6 +10,7 @@ public class Authentication {
 
     public Authentication() {
         this.credenciais = new HashMap<>();
+        this.lock = new ReentrantLock();
     }
 
     public Map<String, String> getCredenciais(){
