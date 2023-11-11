@@ -1,9 +1,6 @@
 package src;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -77,6 +74,9 @@ public class User {
                                 checkServiceStatus();
                                 break;
                             case "3":
+                                loadTasksFromFile();
+                                break;
+                            case "4":
                                 System.out.println("Adeus!");
                                 System.exit(0);
                             default:
@@ -101,7 +101,8 @@ public class User {
             System.out.println("\nBem-vindo!\nEscolha uma opção:");
             System.out.println("1. Executar tarefa");
             System.out.println("2. Consultar estado atual");
-            System.out.println("3. Sair");
+            System.out.println("3. Ler tarefas de um ficheiro");
+            System.out.println("4. Sair");
         }
 
         private void registerUser() {
@@ -160,6 +161,25 @@ public class User {
             }
 
             return null;
+        }
+
+        private void loadTasksFromFile() {
+            System.out.println("Insira o nome do ficheiro a executar: ");
+            scanner.nextLine();
+            String filePath = "TaskLoader/" + scanner.nextLine();
+
+            try (BufferedReader fileReader = new BufferedReader(new FileReader(new File(filePath)))) {
+                String task;
+                while ((task = fileReader.readLine()) != null) {
+                    out.println("EXECUTE " + task);
+                    System.out.println("Tarefa enviada para execução: " + task);
+                    printServerResponse();
+                    printServerResponse();
+                }
+            } catch (IOException e) {
+                System.out.println("Erro ao ler o arquivo de tarefas: " + e.getMessage());
+            }
+
         }
     }
 }

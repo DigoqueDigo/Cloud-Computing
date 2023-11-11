@@ -3,13 +3,13 @@ package src;
 import sd23.JobFunction;
 import sd23.JobFunctionException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class Server {
 
@@ -38,6 +38,7 @@ public class Server {
         private Socket socket;
         private Authentication contas;
         private final int memory;
+        private static final String RESULT_FOLDER = "Resultados";
 
         public TaskHandler(Socket socket, Authentication contas, int maxMemory) {
             this.socket = socket;
@@ -77,10 +78,15 @@ public class Server {
                     }
 
                     else if (words[0].toUpperCase().equals("EXECUTE")) {
-                        String taskCode = words[1];
+                        String taskCode = String.join(" ", Arrays.copyOfRange(words, 1, words.length));
                         int requiredMemory = taskCode.length();
 
-                        if (requiredMemory <= memory) {
+                        int memoryUsed = 0;
+                        for(Task task : taskQueue){
+                            memoryUsed = task.getRequiredMemory();
+                        }
+
+                        if (requiredMemory + memoryUsed <= memory) {
                             Task task = new Task(taskCode, requiredMemory);
                             taskQueue.offer(task);
 
@@ -88,6 +94,7 @@ public class Server {
                             out.flush();
                         } else {
                             out.println("Erro: Memória insuficiente para executar a tarefa.");
+                            out.println();
                             out.flush();
                           }
 
@@ -98,6 +105,13 @@ public class Server {
                         byte[] job = task.getTaskCode().getBytes();
                         try {
                             byte[] result = JobFunction.execute(job);
+
+                            String resultFileName = RESULT_FOLDER + File.separator + "result_" + System.currentTimeMillis() + ".txt";
+
+                            try (FileOutputStream fileOutputStream = new FileOutputStream(resultFileName)) {
+                                fileOutputStream.write(result);
+                            }
+
                             out.println("Sucesso! Retornado "+result.length+" bytes");
                             out.flush();
                         } catch (JobFunctionException e) {
