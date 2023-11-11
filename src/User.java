@@ -3,6 +3,8 @@ package src;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class User {
     public static void main(String[] args) {
@@ -19,17 +21,18 @@ public class User {
 
     static class TCPThread implements Runnable {
         private Socket socket;
-        private BufferedReader in;
-        private PrintWriter out;
+        private DataInputStream dataIn;
+        private DataOutputStream dataOut;
         private Scanner scanner;
+        private Lock lock = new ReentrantLock();
 
         public TCPThread(Socket socket) {
             this.socket = socket;
             this.scanner = new Scanner(System.in);
 
             try {
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
+                dataIn = new DataInputStream(socket.getInputStream());
+                dataOut = new DataOutputStream(socket.getOutputStream());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -40,8 +43,7 @@ public class User {
             int login = 0;
             try {
                 while (true) {
-
-                    if(login == 0){
+                    if (login == 0) {
                         showLoginMenu();
                         System.out.println("Opção: ");
                         String choice = scanner.next();
@@ -50,7 +52,7 @@ public class User {
                                 registerUser();
                                 break;
                             case "2":
-                                if(loginUser()){
+                                if (loginUser()) {
                                     login = 1;
                                 }
                                 break;
@@ -60,9 +62,7 @@ public class User {
                             default:
                                 System.out.println("Opção inválida. Tente novamente.");
                         }
-                    }
-
-                    else{
+                    } else {
                         showMenu();
                         System.out.println("Opção: ");
                         String choice = scanner.next();
@@ -83,7 +83,6 @@ public class User {
                                 System.out.println("Opção inválida. Tente novamente.");
                         }
                     }
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -97,7 +96,7 @@ public class User {
             System.out.println("3. Sair");
         }
 
-        private void showMenu(){
+        private void showMenu() {
             System.out.println("\nBem-vindo!\nEscolha uma opção:");
             System.out.println("1. Executar tarefa");
             System.out.println("2. Consultar estado atual");
@@ -105,56 +104,73 @@ public class User {
             System.out.println("4. Sair");
         }
 
-        private void registerUser() {
-            System.out.println("Insira o nome de usuário:");
-            String username = scanner.next();
-            System.out.println("Insira a senha:");
-            String password = scanner.next();
+        private void registerUser() throws IOException {
+            lock.lock();
+            try {
+                System.out.println("Insira o nome de usuário:");
+                String username = scanner.next();
+                System.out.println("Insira a senha:");
+                String password = scanner.next();
 
-            out.println("REGISTER " + username + " " + password);
-            out.flush();
+                dataOut.writeUTF("REGISTER " + username + " " + password);
+                dataOut.flush();
 
-            printServerResponse();
+                printServerResponse();
+            } finally {
+                lock.unlock();
+            }
         }
 
-        private boolean loginUser() {
-            System.out.println("Insira o nome de usuário:");
-            String username = scanner.next();
-            System.out.println("Insira a senha:");
-            String password = scanner.next();
+        private boolean loginUser() throws IOException {
+            lock.lock();
+            try {
+                System.out.println("Insira o nome de usuário:");
+                String username = scanner.next();
+                System.out.println("Insira a senha:");
+                String password = scanner.next();
 
-            out.println("LOGIN " + username + " " + password);
-            out.flush();
+                dataOut.writeUTF("LOGIN " + username + " " + password);
+                dataOut.flush();
 
-            return printServerResponse().equals("Login com sucesso!");
+                return printServerResponse().equals("Login com sucesso!");
+            } finally {
+                lock.unlock();
+            }
         }
 
-        private void executeTask() {
-            System.out.println("Insira o código da tarefa:");
-            String taskCode = scanner.next();
+        private void executeTask() throws IOException {
+            lock.lock();
+            try {
+                System.out.println("Insira o código da tarefa:");
+                String taskCode = scanner.next();
 
-            out.println("EXECUTE " + taskCode);
-            out.flush();
+                dataOut.writeUTF("EXECUTE " + taskCode);
+                dataOut.flush();
 
-            printServerResponse();
-            printServerResponse();
+                printServerResponse();
+                printServerResponse();
+            } finally {
+                lock.unlock();
+            }
         }
 
-        private void checkServiceStatus() {
-            out.println("STATUS");
-            out.flush();
+        private void checkServiceStatus() throws IOException {
+            lock.lock();
+            try {
+                dataOut.writeUTF("STATUS");
+                dataOut.flush();
 
-            printServerResponse();
+                printServerResponse();
+            } finally {
+                lock.unlock();
+            }
         }
 
         private String printServerResponse() {
             try {
-                String receivedMessage;
-                while ((receivedMessage = in.readLine()) != null) {
-                    System.out.println(receivedMessage);
-                    return receivedMessage;
-                }
-
+                String receivedMessage = dataIn.readUTF();
+                System.out.println(receivedMessage);
+                return receivedMessage;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -164,22 +180,26 @@ public class User {
         }
 
         private void loadTasksFromFile() {
-            System.out.println("Insira o nome do ficheiro a executar: ");
-            scanner.nextLine();
-            String filePath = "TaskLoader/" + scanner.nextLine();
+            lock.lock();
+            try {
+                System.out.println("Insira o nome do ficheiro a executar: ");
+                scanner.nextLine();
+                String filePath = "TaskLoader/" + scanner.nextLine();
 
-            try (BufferedReader fileReader = new BufferedReader(new FileReader(new File(filePath)))) {
-                String task;
-                while ((task = fileReader.readLine()) != null) {
-                    out.println("EXECUTE " + task);
-                    System.out.println("Tarefa enviada para execução: " + task);
-                    printServerResponse();
-                    printServerResponse();
+                try (BufferedReader fileReader = new BufferedReader(new FileReader(new File(filePath)))) {
+                    String task;
+                    while ((task = fileReader.readLine()) != null) {
+                        dataOut.writeUTF("EXECUTE " + task);
+                        System.out.println("Tarefa enviada para execução: " + task);
+                        printServerResponse();
+                        printServerResponse();
+                    }
+                } catch (IOException e) {
+                    System.out.println("Erro ao ler o arquivo de tarefas: " + e.getMessage());
                 }
-            } catch (IOException e) {
-                System.out.println("Erro ao ler o arquivo de tarefas: " + e.getMessage());
+            } finally {
+                lock.unlock();
             }
-
         }
     }
 }

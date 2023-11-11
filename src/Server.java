@@ -8,12 +8,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.io.File;
-import java.io.FileOutputStream;
 
 public class Server {
 
     private static final LinkedBlockingQueue<Task> taskQueue = new LinkedBlockingQueue<>();
+    private static final String RESULT_FOLDER = "Resultados";
 
     public static void main(String[] args) {
         try {
@@ -25,7 +24,7 @@ public class Server {
             int Memory = Integer.parseInt(args[0]);
 
             while ((socket = serverSocket.accept()) != null) {
-                Thread thread = new Thread(new TaskHandler(socket,contas,Memory));
+                Thread thread = new Thread(new TaskHandler(socket, contas, Memory));
                 thread.start();
             }
 
@@ -38,43 +37,39 @@ public class Server {
         private Socket socket;
         private Authentication contas;
         private final int memory;
-        private static final String RESULT_FOLDER = "Resultados";
 
         public TaskHandler(Socket socket, Authentication contas, int maxMemory) {
             this.socket = socket;
             this.contas = contas;
             this.memory = maxMemory;
-
         }
 
         @Override
         public void run() {
             try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                DataInputStream dataIn = new DataInputStream(socket.getInputStream());
+                DataOutputStream dataOut = new DataOutputStream(socket.getOutputStream());
 
                 while (true) {
-                    String message = in.readLine();
+                    String message = dataIn.readUTF();
                     String[] words = message.split(" ");
 
                     if (words[0].toUpperCase().equals("REGISTER")) {
-                        if(contas.registerUser(words[1], words[2])){
-                            out.println("Registado com sucesso!");
+                        if (contas.registerUser(words[1], words[2])) {
+                            dataOut.writeUTF("Registado com sucesso!");
+                        } else {
+                            dataOut.writeUTF("Já existe um usuário com esse nome! Tente novamente.");
                         }
-                        else{
-                            out.println("Já existe um usuário com esse nome! Tente novamente.");
-                        }
-                        out.flush();
+                        dataOut.flush();
                     }
 
                     else if (words[0].toUpperCase().equals("LOGIN")) {
                         if (contas.authenticateUser(words[1], words[2])) {
-                            out.println("Login com sucesso!");
-                            out.flush();
+                            dataOut.writeUTF("Login com sucesso!");
+                        } else {
+                            dataOut.writeUTF("Credenciais erradas! Tente novamente.");
                         }
-                        else{
-                            out.println("Credenciais erradas! Tente novamente.");
-                        }
+                        dataOut.flush();
                     }
 
                     else if (words[0].toUpperCase().equals("EXECUTE")) {
@@ -82,7 +77,7 @@ public class Server {
                         int requiredMemory = taskCode.length();
 
                         int memoryUsed = 0;
-                        for(Task task : taskQueue){
+                        for (Task task : taskQueue) {
                             memoryUsed = task.getRequiredMemory();
                         }
 
@@ -90,14 +85,12 @@ public class Server {
                             Task task = new Task(taskCode, requiredMemory);
                             taskQueue.offer(task);
 
-                            out.println("Tarefa em espera para execução.");
-                            out.flush();
+                            dataOut.writeUTF("Tarefa em espera para execução.");
                         } else {
-                            out.println("Erro: Memória insuficiente para executar a tarefa.");
-                            out.println();
-                            out.flush();
-                          }
-
+                            dataOut.writeUTF("Erro: Memória insuficiente para executar a tarefa.");
+                            dataOut.writeUTF("");
+                        }
+                        dataOut.flush();
                     }
 
                     Task task = taskQueue.poll();
@@ -112,12 +105,11 @@ public class Server {
                                 fileOutputStream.write(result);
                             }
 
-                            out.println("Sucesso! Retornado "+result.length+" bytes");
-                            out.flush();
+                            dataOut.writeUTF("Sucesso! Retornado " + result.length + " bytes");
                         } catch (JobFunctionException e) {
-                            out.println("Job failed: code="+e.getCode()+" message="+e.getMessage());
-                            out.flush();
+                            dataOut.writeUTF("Job failed: code=" + e.getCode() + " message=" + e.getMessage());
                         }
+                        dataOut.flush();
                     }
                 }
             } catch (Exception e) {
@@ -125,5 +117,4 @@ public class Server {
             }
         }
     }
-
 }
