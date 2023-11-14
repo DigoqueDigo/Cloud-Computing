@@ -1,14 +1,34 @@
 package client;
-
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.Socket;
+import server.Server;
+
 
 public class Client{
 
-    private Socket socket;
+    public static void main(String[] args){
 
-    public Client(Socket socket){
-        this.socket = socket;
-    }
+        try{
 
-    public void execute(){}
+            Socket socket = new Socket(Server.ServerAddrees,Server.ServerDefaultPort);
+            DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+
+            Thread clientReader = new Thread(new ClientReader(new Buffer(),inputStream));
+            Thread clientWriter = new Thread(new ClientWriter(new Buffer(),outputStream));
+
+            clientReader.start();
+            clientWriter.start();
+
+            socket.close();
+
+            clientReader.join();
+            clientWriter.join();
+        }
+
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }   
 }

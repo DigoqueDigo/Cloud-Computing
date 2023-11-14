@@ -19,11 +19,10 @@ public class UserContainer{
         this.readLock = lock.readLock();
         this.writeLock = lock.writeLock();
         this.userContainer = new HashMap<String,User>();
-
     }
 
 
-    public boolean putUser(User user){
+    public boolean addUser(User user){
 
         try{
             this.writeLock.lock();
