@@ -33,24 +33,16 @@ public class Carrier{
     }
 
 
-    public Packet receivePacket(DataInputStream dataInputStream){
-        
-        try{
-            
-            Packet packet = new HelloPacket(Protocol.USER);
-            int data_size = dataInputStream.readInt();
-            byte data[] = new byte[data_size];
+    public Packet receivePacket(DataInputStream dataInputStream) throws Exception{
 
-            if (Reader.read(dataInputStream,data,data_size) != data_size){
-                throw new Exception("TCP packet reading incomplete");
-            }
+        Packet packet = new HelloPacket(Protocol.USER);
+        int data_size = dataInputStream.readInt();
+        byte data[] = new byte[data_size];
 
-            return packet.deserialize(data);
+        if (Reader.read(dataInputStream,data,data_size) != data_size){
+            throw new Exception("TCP packet reading incomplete");
         }
 
-        catch (Exception e){
-            System.out.println(e.getMessage());
-            return null;
-        }
+        return packet.deserialize(data);
     }
 }

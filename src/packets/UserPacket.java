@@ -11,11 +11,27 @@ import user.User;
 public class UserPacket extends Packet{
 
     private User user;
+    private String message;
 
 
-    public UserPacket(Protocol protocol, User user){
+    public UserPacket(Protocol protocol, User user, String message){
         super(protocol);
         this.user = user;
+        this.message = message;
+    }
+
+
+    public User getUser(){
+        return this.user;
+    }
+
+    public String getMessage(){
+        return this.message;
+    }
+
+
+    public void setMessage(String message){
+        this.message = message;
     }
 
 
@@ -26,6 +42,7 @@ public class UserPacket extends Packet{
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
         dataOutputStream.writeUTF(super.getProtocol().name());
+        dataOutputStream.writeUTF(this.message);
         dataOutputStream.writeInt(data_user.length);
         dataOutputStream.write(data_user);
         dataOutputStream.flush();
@@ -40,10 +57,11 @@ public class UserPacket extends Packet{
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
         Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
+        String message = dataInputStream.readUTF();
         byte[] data_user = new byte[dataInputStream.readInt()];
         Reader.read(dataInputStream,data_user,data_user.length);
 
-        return new UserPacket(protocol,User.deserialize(data_user));
+        return new UserPacket(protocol,User.deserialize(data_user),message);
     }
 
 

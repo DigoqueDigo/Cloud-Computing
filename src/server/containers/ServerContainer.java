@@ -1,4 +1,6 @@
 package server.containers;
+import user.User;
+
 
 public class ServerContainer{
 
@@ -6,5 +8,13 @@ public class ServerContainer{
 
     public ServerContainer(){
         this.userContainer = new UserContainer();
+    }
+
+    public boolean putUser(User user){
+        return this.userContainer.putUser(user);
+    }
+
+    public User getUser(String username){
+        return this.userContainer.getUser(username);
     }
 }

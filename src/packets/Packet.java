@@ -4,15 +4,19 @@ import java.io.IOException;
 
 public abstract class Packet{
 
-    public enum Protocol {LOGIN, CREATE_ACCOUNT, USER, MACHINE};
+    public enum Protocol {LOGIN, CREATE_ACCOUNT, USER, MACHINE, ERROR};
     private Protocol protocol;
 
     public Packet(Protocol protocol){
         this.protocol = protocol;
     }
 
-    Protocol getProtocol(){
+    public Protocol getProtocol(){
         return this.protocol;
+    }
+
+    public void setProtocol(Protocol protocol){
+        this.protocol = protocol; 
     }
 
     public abstract byte[] serialize() throws IOException;
