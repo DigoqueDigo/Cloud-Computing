@@ -10,20 +10,12 @@ import user.User;
 
 public class UserPacket extends Packet{
 
-    public enum UserPacketProtocol {LOGIN, CREATE_ACCOUNT};
-    
-    private UserPacketProtocol protocol;
     private User user;
 
 
-    public UserPacket(UserPacketProtocol protocol, User user){
-        this.protocol = protocol;
+    public UserPacket(Protocol protocol, User user){
+        super(protocol);
         this.user = user;
-    }
-
-
-    public UserPacketProtocol getProtocol(){
-        return this.protocol;
     }
 
 
@@ -33,23 +25,29 @@ public class UserPacket extends Packet{
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
-        dataOutputStream.writeUTF(this.protocol.name());
+        dataOutputStream.writeUTF(super.getProtocol().name());
         dataOutputStream.writeInt(data_user.length);
         dataOutputStream.write(data_user);
+        dataOutputStream.flush();
 
         return byteArrayOutputStream.toByteArray();
     }
     
     
-    public UserPacket deserialize(byte[] data) throws IOException{
+    private static UserPacket deserializePrivate(byte[] data) throws IOException{
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
-        UserPacketProtocol protocol = UserPacketProtocol.valueOf(dataInputStream.readUTF());
+        Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
         byte[] data_user = new byte[dataInputStream.readInt()];
         Reader.read(dataInputStream,data_user,data_user.length);
 
         return new UserPacket(protocol,User.deserialize(data_user));
+    }
+
+
+    public UserPacket deserialize(byte[] data) throws IOException{
+        return UserPacket.deserializePrivate(data);
     }
 }

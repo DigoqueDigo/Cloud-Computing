@@ -56,6 +56,7 @@ public class User{
         
         dataOutputStream.writeUTF(this.username);
         dataOutputStream.writeUTF(this.password);
+        dataOutputStream.flush();
 
         return byteArrayOutputStream.toByteArray();
     }
