@@ -1,6 +1,9 @@
 package server.workers.client;
 import java.io.DataInputStream;
 import carrier.Carrier;
+import packets.ConsultPacket;
+import packets.JobPacket;
+import packets.Packet;
 import packets.UserPacket;
 import packets.Packet.Protocol;
 import server.containers.ServerContainer;
@@ -21,35 +24,55 @@ public class ServerClientWorkerReader implements Runnable{
     }
 
 
-    private void executeLogin(UserPacket packet) throws Exception{
+    private void welcomeHandler(Packet packet) throws Exception{
 
-        User user = packet.getUser();
+        User user = ((UserPacket) packet).getUser();
+        Packet resultPacket = packet;
         
         switch (packet.getProtocol()){
 
             case CREATE_ACCOUNT:
-                
+
                 if (!this.serverContainer.addUser(user)){
-                    packet.setProtocol(Protocol.ERROR);
-                    packet.setOptionalMessage("Username already in use");
+                    resultPacket = new UserPacket(Protocol.ERROR,"Username already in use",user);
                 }
-                
+
                 break;
 
             case LOGIN:
+
+                if (this.serverContainer.getUser(user.getUsername()) == null){
+                    resultPacket = new UserPacket(Protocol.ERROR,"Unknown username",user);
+                }
                 
-                if (!user.equals(this.serverContainer.getUser(user.getUsername()))){
-                    packet.setProtocol(Protocol.ERROR);
-                    packet.setOptionalMessage("Invalid password");
+                else if (!user.equals(this.serverContainer.getUser(user.getUsername()))){
+                    resultPacket = new UserPacket(Protocol.ERROR,"Invalid password",user);
                 }
                 
                 break;
 
             default:
+                resultPacket = new UserPacket(Protocol.ERROR,"Invalid Protocol",user);
                 break;
         }
 
-        this.serverContainer.addPacket(nonce,packet);
+        this.serverContainer.addResultPacket(this.nonce,resultPacket);
+    }
+
+
+    private void jobHandler(Packet packet){
+
+        switch (packet.getProtocol()){
+
+            case JOB:
+                JobPacket jobPacket = (JobPacket) packet;
+                this.serverContainer.addJob(jobPacket.getJob());
+                break;
+        
+            default:
+                this.serverContainer.addResultPacket(nonce, new ConsultPacket(Protocol.ERROR)); // por implementar
+                break;
+        }
     }
 
 
@@ -57,18 +80,16 @@ public class ServerClientWorkerReader implements Runnable{
 
         try{
 
+            Packet packet;
             Carrier carrier = Carrier.getInstance();
-            UserPacket packet = (UserPacket) carrier.receivePacket(this.inputStream);
 
-            switch (packet.getProtocol()){
-                
-                case LOGIN:
-                case CREATE_ACCOUNT:
-                    executeLogin((UserPacket)packet);
-                    break;
-            
-                default:
-                    break;
+            while ((packet = carrier.receivePacket(inputStream)) != null){
+
+                if (packet.getProtocol() == Protocol.LOGIN || packet.getProtocol() == Protocol.CREATE_ACCOUNT){
+                    welcomeHandler(packet);
+                }
+
+                else jobHandler(packet);
             }
         }
 

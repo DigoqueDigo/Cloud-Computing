@@ -24,7 +24,7 @@ public class ServerClientWorkerWriter implements Runnable{
         Packet packet;
         Carrier carrier = Carrier.getInstance();
         
-        while ((packet = serverContainer.getPacket(this.nonce)) != null){
+        while ((packet = serverContainer.getResultPacket(this.nonce)) != null){
             carrier.sendPacket(outputStream,packet);
         }
     }

@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import carrier.Reader;
 import job.Consult;
 
@@ -12,27 +11,23 @@ import job.Consult;
 public class ConsultPacket extends Packet{
 
     private Consult consult;
-    private String optionalMessage;
 
 
-    public ConsultPacket(){
-        super(Protocol.CONSULT);
+    public ConsultPacket(Protocol protocol){
+        super(protocol);
         this.consult = new Consult();
-        this.optionalMessage = "";
     }
 
 
-    public ConsultPacket(Consult consult){
-        super(Protocol.CONSULT);
+    public ConsultPacket(Protocol protocol, Consult consult){
+        super(protocol);
         this.consult = consult;
-        this.optionalMessage = "";
     }
 
 
-    public ConsultPacket(Consult consult, String optinalMessage){
-        super(Protocol.CONSULT);
+    public ConsultPacket(Protocol protocol, String optinalMessage, Consult consult){
+        super(protocol,optinalMessage);
         this.consult = consult;
-        this.optionalMessage = optinalMessage;
     }
 
     
@@ -42,9 +37,10 @@ public class ConsultPacket extends Packet{
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
+        dataOutputStream.writeUTF(super.getProtocol().name());
+        dataOutputStream.writeUTF(super.getOptionalMessage());
         dataOutputStream.writeInt(consult_data.length);
         dataOutputStream.write(consult_data);
-        dataOutputStream.writeUTF(this.optionalMessage);
         dataOutputStream.flush();
 
         return byteArrayOutputStream.toByteArray();
@@ -56,11 +52,12 @@ public class ConsultPacket extends Packet{
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(dataConsult);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
+        Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
+        String optionalMessage = dataInputStream.readUTF();
         byte[] data = new byte[dataInputStream.readInt()];
         Reader.read(dataInputStream,data,data.length);
-        String optionalMessage = dataInputStream.readUTF();
 
-        return new ConsultPacket(Consult.deserialize(data),optionalMessage);
+        return new ConsultPacket(protocol,optionalMessage,Consult.deserialize(data));
     }
 
 

@@ -6,17 +6,28 @@ public abstract class Packet{
 
     public enum Protocol {LOGIN, CREATE_ACCOUNT, USER, MACHINE, JOB, CONSULT, ERROR};
     private Protocol protocol;
+    private String optionalMessage;
 
+    
     public Packet(Protocol protocol){
         this.protocol = protocol;
+        this.optionalMessage = "";
     }
+
+
+    public Packet(Protocol protocol, String optionalMessage){
+        this.protocol = protocol;
+        this.optionalMessage = optionalMessage; 
+    }
+
 
     public Protocol getProtocol(){
         return this.protocol;
     }
 
-    public void setProtocol(Protocol protocol){
-        this.protocol = protocol; 
+
+    public String getOptionalMessage(){
+        return this.optionalMessage;
     }
 
     public abstract byte[] serialize() throws IOException;

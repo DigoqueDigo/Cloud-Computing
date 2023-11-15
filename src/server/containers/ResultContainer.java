@@ -8,26 +8,26 @@ import java.util.concurrent.locks.ReentrantLock;
 import packets.Packet;
 
 
-public class PacketContainer{
+public class ResultContainer{
 
     private ReentrantLock lock;
     private Condition condition;
-    private Map<String,List<Packet>> packetContainer;
+    private Map<String,List<Packet>> resultContainer;
 
     
-    public PacketContainer(){
+    public ResultContainer(){
         this.lock = new ReentrantLock();
         this.condition = this.lock.newCondition();
-        this.packetContainer = new HashMap<String,List<Packet>>();
+        this.resultContainer = new HashMap<String,List<Packet>>();
     }
 
 
-    public void addPacket(String username, Packet packet){
+    public void addResultPacket(String nonce, Packet packet){
         
         try{
             this.lock.lock();
-            this.packetContainer.putIfAbsent(username,new ArrayList<>());
-            this.packetContainer.get(username).add(packet);
+            this.resultContainer.putIfAbsent(nonce,new ArrayList<>());
+            this.resultContainer.get(nonce).add(packet);
             this.condition.signalAll();
         }
 
@@ -37,16 +37,17 @@ public class PacketContainer{
     }
 
 
-    public Packet getPacket(String username){
+    public Packet getResultPacket(String nonce){
 
         try{
 
             this.lock.lock();
             Packet packet = null;
-            List<Packet> packets = this.packetContainer.get(username);
+            List<Packet> packets = this.resultContainer.get(nonce);
             
             while (packets == null || packets.size() == 0){
                 this.condition.await();
+                packets = this.resultContainer.get(nonce);
             }
 
             packet = packets.get(packets.size()-1);

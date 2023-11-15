@@ -1,4 +1,5 @@
 package server.containers;
+import job.Job;
 import packets.Packet;
 import user.User;
 
@@ -6,11 +7,14 @@ import user.User;
 public class ServerContainer{
 
     private UserContainer userContainer;
-    private PacketContainer packetContainer;
+    private ResultContainer resultContainer;
+    private JobContainer jobContainer;
+
 
     public ServerContainer(){
         this.userContainer = new UserContainer();
-        this.packetContainer = new PacketContainer();
+        this.resultContainer = new ResultContainer();
+        this.jobContainer = new JobContainer();
     }
 
     public boolean addUser(User user){
@@ -21,11 +25,19 @@ public class ServerContainer{
         return this.userContainer.getUser(username);
     }
 
-    public void addPacket(String username, Packet packet){
-        this.packetContainer.addPacket(username,packet);
+    public void addResultPacket(String nonce, Packet packet){
+        this.resultContainer.addResultPacket(nonce,packet);
     }
 
-    public Packet getPacket(String username){
-        return this.packetContainer.getPacket(username);
+    public Packet getResultPacket(String nonce){
+        return this.resultContainer.getResultPacket(nonce);
+    }
+
+    public void addJob(Job job){
+        this.jobContainer.addJob(job);
+    }
+
+    public Job getJob(){
+        return this.jobContainer.getJob();
     }
 }

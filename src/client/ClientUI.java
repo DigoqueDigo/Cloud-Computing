@@ -1,7 +1,12 @@
 package client;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import job.Job;
+import packets.ConsultPacket;
+import packets.JobPacket;
 import packets.Packet;
 import packets.UserPacket;
 import packets.Packet.Protocol;
@@ -32,13 +37,13 @@ public class ClientUI{
     public Packet getUserPacket(){
 
         User user = null;
-        Packet packet = null;
+        Packet resultPacket = null;
         String option, username, password;
 
         System.out.println("1 -> Creat account");
         System.out.println("2 -> Login\n");
 
-        while (packet == null || user == null){
+        while (resultPacket == null || user == null){
 
             System.out.println(YELLOW_BOLD  + ">>> " + RESET);
             
@@ -56,7 +61,7 @@ public class ClientUI{
 
                     user = new User(username,password);
 
-                    packet = (Integer.valueOf(option) == 1) ?
+                    resultPacket = (Integer.valueOf(option) == 1) ?
                             new UserPacket(Protocol.CREATE_ACCOUNT,user) :
                             new UserPacket(Protocol.LOGIN,user);
                 }
@@ -69,21 +74,62 @@ public class ClientUI{
             }
         }
 
-        return packet;
+        return resultPacket;
+    }
+
+
+    private Packet getJobPacket(){
+
+        String filename;
+        byte[] job_data;
+        int tolerance, memory;
+        Packet resutlPacket = null;
+
+        while (resutlPacket == null){
+
+            try{
+
+                System.out.println("Enter task tolerance" + YELLOW_BOLD + " >>> " + RESET);
+                tolerance = Integer.valueOf(this.input.readLine());
+
+                System.out.println("Enter necessary memory" + YELLOW_BOLD + " >>> " + RESET);
+                memory = Integer.valueOf(this.input.readLine());
+
+                System.out.println("Enter task file" + YELLOW_BOLD + " >>> " + RESET);
+                filename = this.input.readLine();
+
+                File file = new File(Client.INPUT_FOLDER + filename);
+
+                if (!file.exists()) throw new FileNotFoundException();
+
+                job_data = Files.readAllBytes(file.toPath());
+                
+                Job job = new Job(tolerance,memory,job_data);
+                resutlPacket = new JobPacket(Protocol.JOB,job);
+            }
+
+            catch (FileNotFoundException e){
+                System.out.println(RED_BOLD + "Invalid file" + RESET);
+            }
+
+            catch (Exception e){
+                System.out.println(RED_BOLD + "Invalid entry" + RESET);
+            }
+        }
+
+        return resutlPacket;
     }
 
  
-    public Packet getJobPacket(){
+    public Packet getPacket(){
 
-        Job job = null;
-        Packet packet = null;
-        String option, file;
-        int tolerance, memory;
+        String option;
+        Packet resultPacket = null;
 
         System.out.println("1 -> Check server status");
         System.out.println("2 -> Send task to server");
 
-        while (packet == null || job == null){
+        while (resultPacket == null){
 
             System.out.println(YELLOW_BOLD + ">>> " + RESET);
 
@@ -91,13 +137,9 @@ public class ClientUI{
 
                 option = this.input.readLine();
 
-                if (Integer.valueOf(option) == 1){
+                if (Integer.valueOf(option) == 1) resultPacket = new ConsultPacket(Protocol.CONSULT);
 
-                }
-
-                else if (Integer.valueOf(option) == 1){
-
-                }
+                else if (Integer.valueOf(option) == 2) resultPacket = getJobPacket();
 
                 else throw new Exception();
             }
@@ -107,6 +149,6 @@ public class ClientUI{
             }
         }
 
-        return packet;
+        return resultPacket;
     }
 }
