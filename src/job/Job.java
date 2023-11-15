@@ -38,6 +38,16 @@ public class Job{
         this.data = Arrays.copyOf(data,data.length);
         this.result = result;
     }
+
+
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Tolerance: ").append(this.tolerance);
+        buffer.append("\tMemory: ").append(this.memory);
+        buffer.append("\tData size: ").append(this.data.length);
+        buffer.append("\tResult: ").append(this.result);
+        return buffer.toString();
+    }
     
     
     public byte[] serialize() throws IOException{

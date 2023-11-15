@@ -28,8 +28,6 @@ public class ClientReader implements Runnable{
             }
         }
 
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        catch (Exception e) {}
     }
 }

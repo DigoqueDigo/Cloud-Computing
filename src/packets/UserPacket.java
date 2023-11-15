@@ -30,6 +30,14 @@ public class UserPacket extends Packet{
     }
 
 
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(super.toString());
+        buffer.append("\nUser: ").append(this.user.toString());
+        return buffer.toString();
+    }
+
+
     public byte[] serialize() throws IOException{
 
         byte[] data_user = this.user.serialize();
@@ -46,7 +54,7 @@ public class UserPacket extends Packet{
     }
     
     
-    private static UserPacket deserializePrivate(byte[] data) throws IOException{
+    public static UserPacket deserialize(byte[] data) throws IOException{
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
@@ -57,10 +65,5 @@ public class UserPacket extends Packet{
         Reader.read(dataInputStream,data_user,data_user.length);
 
         return new UserPacket(protocol,optionalMessage,User.deserialize(data_user));
-    }
-
-
-    public UserPacket deserialize(byte[] data) throws IOException{
-        return UserPacket.deserializePrivate(data);
     }
 }

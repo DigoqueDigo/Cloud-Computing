@@ -4,7 +4,9 @@ import java.io.IOException;
 
 public abstract class Packet{
 
+    public enum Type {_HELLO_, _USER_, _JOB_, _CONSULT_}
     public enum Protocol {LOGIN, CREATE_ACCOUNT, USER, MACHINE, JOB, CONSULT, ERROR};
+    
     private Protocol protocol;
     private String optionalMessage;
 
@@ -30,7 +32,12 @@ public abstract class Packet{
         return this.optionalMessage;
     }
 
-    public abstract byte[] serialize() throws IOException;
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Protocol: ").append(this.protocol.name());
+        buffer.append("\nMessage: ").append(this.optionalMessage);
+        return buffer.toString();
+    }
 
-    public abstract Packet deserialize(byte[] data) throws IOException;
+    public abstract byte[] serialize() throws IOException;
 }

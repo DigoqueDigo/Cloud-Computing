@@ -68,7 +68,6 @@ public class Buffer{
             }
 
             return packet;
-
         }
 
         catch (Exception e) {return null;}

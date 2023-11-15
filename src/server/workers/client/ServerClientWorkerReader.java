@@ -26,35 +26,26 @@ public class ServerClientWorkerReader implements Runnable{
 
     private void welcomeHandler(Packet packet) throws Exception{
 
+        Packet resultPacket;
         User user = ((UserPacket) packet).getUser();
-        Packet resultPacket = packet;
+        System.out.println(packet);
         
-        switch (packet.getProtocol()){
+        if (packet.getProtocol() == Protocol.CREATE_ACCOUNT){
 
-            case CREATE_ACCOUNT:
-
-                if (!this.serverContainer.addUser(user)){
-                    resultPacket = new UserPacket(Protocol.ERROR,"Username already in use",user);
-                }
-
-                break;
-
-            case LOGIN:
-
-                if (this.serverContainer.getUser(user.getUsername()) == null){
-                    resultPacket = new UserPacket(Protocol.ERROR,"Unknown username",user);
-                }
-                
-                else if (!user.equals(this.serverContainer.getUser(user.getUsername()))){
-                    resultPacket = new UserPacket(Protocol.ERROR,"Invalid password",user);
-                }
-                
-                break;
-
-            default:
-                resultPacket = new UserPacket(Protocol.ERROR,"Invalid Protocol",user);
-                break;
+            resultPacket = (!this.serverContainer.addUser(user)) ?
+                new UserPacket(Protocol.ERROR,"Username already in use",user) :
+                new UserPacket(Protocol.CREATE_ACCOUNT,"Account successfully created",user);
         }
+
+        else if (this.serverContainer.getUser(user.getUsername()) == null){
+            resultPacket = new UserPacket(Protocol.ERROR,"Unknown username",user);
+        }
+            
+        else if (!user.equals(this.serverContainer.getUser(user.getUsername()))){
+            resultPacket = new UserPacket(Protocol.ERROR,"Invalid password",user);
+        }
+
+        else resultPacket = new UserPacket(Protocol.LOGIN,"Login successful",user);
 
         this.serverContainer.addResultPacket(this.nonce,resultPacket);
     }
@@ -94,7 +85,8 @@ public class ServerClientWorkerReader implements Runnable{
         }
 
         catch (Exception e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            this.serverContainer.addResultPacket(nonce,null);
         }
     }
 }

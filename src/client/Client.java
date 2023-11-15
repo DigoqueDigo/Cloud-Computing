@@ -17,24 +17,28 @@ public class Client{
             Client.INPUT_FOLDER = args[0];
             Client.OUTPUT_FOLDER = args[1];
 
+            Buffer inBuffer = new Buffer();
+            Buffer outBuffer = new Buffer();
+
             Socket socket = new Socket(Server.ServerAddrees,Server.ServerDefaultPort);
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-
-            Thread clientReader = new Thread(new ClientReader(new Buffer(),inputStream));
-            Thread clientWriter = new Thread(new ClientWriter(new Buffer(),outputStream));
+          
+            ClientWorker clientWorker = new ClientWorker(inBuffer,outBuffer);
+            Thread clientReader = new Thread(new ClientReader(inBuffer,inputStream));
+            Thread clientWriter = new Thread(new ClientWriter(outBuffer,outputStream));
 
             clientReader.start();
             clientWriter.start();
+            clientWorker.run();
 
             socket.close();
 
             clientReader.join();
             clientWriter.join();
+            System.out.println("Bye");
         }
 
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        catch (Exception e) {}
     }   
 }

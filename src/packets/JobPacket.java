@@ -30,6 +30,14 @@ public class JobPacket extends Packet{
     }
 
 
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(super.toString());
+        buffer.append("\nJob: ").append(this.job.toString());
+        return buffer.toString();
+    }
+
+
     public byte[] serialize() throws IOException{
 
         byte[] data_job = this.job.serialize();
@@ -46,7 +54,7 @@ public class JobPacket extends Packet{
     }
 
 
-    private static JobPacket deserializePrivate(byte[] data) throws IOException{
+    public static JobPacket deserialize(byte[] data) throws IOException{
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
@@ -58,9 +66,4 @@ public class JobPacket extends Packet{
 
         return new JobPacket(protocol,optionalMessage,Job.deserialize(data_job));
     }
-
-
-    public JobPacket deserialize(byte[] data) throws IOException{
-        return JobPacket.deserializePrivate(data);
-    }    
 }

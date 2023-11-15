@@ -21,11 +21,16 @@ public class ServerClientWorkerWriter implements Runnable{
 
     public void run(){
 
-        Packet packet;
-        Carrier carrier = Carrier.getInstance();
+        try{
+
+            Packet packet;
+            Carrier carrier = Carrier.getInstance();
         
-        while ((packet = serverContainer.getResultPacket(this.nonce)) != null){
-            carrier.sendPacket(outputStream,packet);
+            while ((packet = serverContainer.getResultPacket(this.nonce)) != null){
+               carrier.sendPacket(outputStream,packet);
+            }
         }
+
+        catch (Exception e){}
     }
 }

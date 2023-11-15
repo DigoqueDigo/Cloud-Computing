@@ -1,5 +1,6 @@
 package client;
 import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -18,6 +19,8 @@ public class ClientUI{
     private static final String RESET = "\033[0m";
     private static final String RED_BOLD = "\033[1;31m";
     private static final String YELLOW_BOLD = "\033[1;33m";
+    public static final String WHITE_BOLD = "\033[1;37m";
+    public static final String GREEN_BOLD = "\033[1;32m";
 
     private static ClientUI singleton = null;
     private BufferedReader input;
@@ -34,18 +37,26 @@ public class ClientUI{
     }
 
 
-    public Packet getUserPacket(){
+    public void showPacketMessage(Packet packet){        
+        if (packet.getProtocol() != Protocol.ERROR)
+            System.out.println(GREEN_BOLD + packet.getOptionalMessage() + RESET);
+        else System.out.println(RED_BOLD + packet.getOptionalMessage() + RESET);
+    }
+
+
+    public Packet getUserPacket() throws EOFException{
 
         User user = null;
         Packet resultPacket = null;
         String option, username, password;
 
-        System.out.println("1 -> Creat account");
-        System.out.println("2 -> Login\n");
+        System.out.println(WHITE_BOLD + "1 -> Login" + RESET);
+        System.out.println(WHITE_BOLD + "2 -> Creat account" + RESET);
+        System.out.println(WHITE_BOLD + "3 -> Exit program" + RESET);
 
         while (resultPacket == null || user == null){
 
-            System.out.println(YELLOW_BOLD  + ">>> " + RESET);
+            System.out.print(YELLOW_BOLD  + ">>> " + RESET);
             
             try{
                 
@@ -53,21 +64,25 @@ public class ClientUI{
 
                 if (Integer.valueOf(option) == 1 || Integer.valueOf(option) == 2){
 
-                    System.out.println(YELLOW_BOLD + "Enter a username: " + RESET);
+                    System.out.print(YELLOW_BOLD + "Enter a username: " + RESET);
                     username = this.input.readLine();
                     
-                    System.out.println(YELLOW_BOLD + "Enter a password: " + RESET);
+                    System.out.print(YELLOW_BOLD + "Enter a password: " + RESET);
                     password = this.input.readLine();
 
                     user = new User(username,password);
 
                     resultPacket = (Integer.valueOf(option) == 1) ?
-                            new UserPacket(Protocol.CREATE_ACCOUNT,user) :
-                            new UserPacket(Protocol.LOGIN,user);
+                            new UserPacket(Protocol.LOGIN,user) :
+                            new UserPacket(Protocol.CREATE_ACCOUNT,user);
                 }
+
+                else if (Integer.valueOf(option) == 3) throw new EOFException(); 
 
                 else throw new Exception();
             }
+
+            catch (EOFException e) {throw e;}
 
             catch (Exception e){
                 System.out.println(RED_BOLD + "Invalid option" + RESET);
@@ -89,13 +104,13 @@ public class ClientUI{
 
             try{
 
-                System.out.println("Enter task tolerance" + YELLOW_BOLD + " >>> " + RESET);
+                System.out.print(YELLOW_BOLD + "Enter task tolerance: " + RESET);
                 tolerance = Integer.valueOf(this.input.readLine());
 
-                System.out.println("Enter necessary memory" + YELLOW_BOLD + " >>> " + RESET);
+                System.out.print(YELLOW_BOLD + "Enter necessary memory: " + RESET);
                 memory = Integer.valueOf(this.input.readLine());
 
-                System.out.println("Enter task file" + YELLOW_BOLD + " >>> " + RESET);
+                System.out.print(YELLOW_BOLD + "Enter task file: " + RESET);
                 filename = this.input.readLine();
 
                 File file = new File(Client.INPUT_FOLDER + filename);
@@ -121,17 +136,18 @@ public class ClientUI{
     }
 
  
-    public Packet getPacket(){
+    public Packet getPacket() throws EOFException{
 
         String option;
         Packet resultPacket = null;
 
-        System.out.println("1 -> Check server status");
-        System.out.println("2 -> Send task to server");
+        System.out.println(WHITE_BOLD + "1 -> Check server status" + RESET);
+        System.out.println(WHITE_BOLD + "2 -> Send task to server" + RESET);
+        System.out.println(WHITE_BOLD + "3 -> Exit program" + RESET);
 
         while (resultPacket == null){
 
-            System.out.println(YELLOW_BOLD + ">>> " + RESET);
+            System.out.print(YELLOW_BOLD + ">>> " + RESET);
 
             try{
 
@@ -141,8 +157,12 @@ public class ClientUI{
 
                 else if (Integer.valueOf(option) == 2) resultPacket = getJobPacket();
 
+                else if (Integer.valueOf(option) == 3) throw new EOFException();
+
                 else throw new Exception();
             }
+
+            catch (EOFException e) {throw e;}
 
             catch (Exception e){
                 System.out.println(RED_BOLD + "Invalid option");

@@ -30,6 +30,14 @@ public class ConsultPacket extends Packet{
         this.consult = consult;
     }
 
+
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(super.toString());
+        buffer.append("\nConsult: ").append(this.consult.toString());
+        return buffer.toString();
+    }
+
     
     public byte[] serialize() throws IOException{
 
@@ -47,7 +55,7 @@ public class ConsultPacket extends Packet{
     }
 
 
-    private static ConsultPacket deserializePrivate(byte[] dataConsult) throws IOException{
+    public static ConsultPacket deserialize(byte[] dataConsult) throws IOException{
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(dataConsult);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
@@ -58,10 +66,5 @@ public class ConsultPacket extends Packet{
         Reader.read(dataInputStream,data,data.length);
 
         return new ConsultPacket(protocol,optionalMessage,Consult.deserialize(data));
-    }
-
-
-    public ConsultPacket deserialize(byte[] data) throws IOException{
-        return ConsultPacket.deserializePrivate(data);
     }
 }

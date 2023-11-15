@@ -28,17 +28,6 @@ public class User{
     }
 
     
-    public String toString(){
-
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("Username: ").append(this.username);
-        buffer.append("\tPassowrd: ").append(this.password);
-
-        return buffer.toString();
-    }
-
-    
     public boolean equals(Object obj){
 
         if (obj == null || this.getClass() != obj.getClass()) return false;
@@ -46,6 +35,14 @@ public class User{
         User that = (User) obj;
         return this.username.equals(that.getUsername()) &&
                 this.password.equals(that.getPassowrd());
+    }
+
+
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Username: ").append(this.username);
+        buffer.append("\tPassword: ").append(this.password);
+        return buffer.toString();
     }
 
     

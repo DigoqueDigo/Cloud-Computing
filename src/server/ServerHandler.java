@@ -1,4 +1,4 @@
-package server.workers;
+package server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import carrier.Carrier;
 import packets.Packet;
 import server.containers.ServerContainer;
 import server.workers.client.ServerClientWorkerWriter;
-import server.workers.client.ServerClientWorkerReader;
 import server.workers.machine.ServerMachineWorker;
+import server.workers.client.ServerClientWorkerReader;
 
 
 public class ServerHandler implements Runnable{
@@ -37,6 +37,9 @@ public class ServerHandler implements Runnable{
             Carrier carrier = Carrier.getInstance();
             String nonce = UUID.randomUUID().toString();
             Packet packet = carrier.receivePacket(this.inputstream);
+            
+            System.out.println(packet);
+            
             List<Thread> threads = new ArrayList<Thread>();
 
             switch (packet.getProtocol()){
@@ -64,14 +67,12 @@ public class ServerHandler implements Runnable{
             for (Thread thread : threads) {thread.join();}
 
             socket.close();
+            System.out.println("Client disconnected");
         }
 
         catch (Exception e){
-
             try {socket.close();}
             catch (Exception f) {}
-
-            System.out.println(e.getMessage());
         }
     }
 }

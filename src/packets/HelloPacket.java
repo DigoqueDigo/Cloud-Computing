@@ -14,6 +14,11 @@ public class HelloPacket extends Packet{
     }
 
     
+    public String toString(){
+        return super.toString();
+    }
+
+
     public byte[] serialize() throws IOException{
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -26,7 +31,7 @@ public class HelloPacket extends Packet{
     }
 
 
-    private static HelloPacket deserializePrivate(byte[] data) throws IOException{
+    public static HelloPacket deserialize(byte[] data) throws IOException{
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
@@ -34,10 +39,5 @@ public class HelloPacket extends Packet{
         Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
 
         return new HelloPacket(protocol);
-    }
-
-
-    public HelloPacket deserialize(byte[] data) throws IOException{
-        return HelloPacket.deserializePrivate(data);
     }
 }

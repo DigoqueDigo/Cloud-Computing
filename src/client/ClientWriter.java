@@ -18,11 +18,16 @@ public class ClientWriter implements Runnable{
 
     public void run(){
 
-        Packet packet;
-        Carrier carrier = Carrier.getInstance();
+        try{
 
-        while ((packet = outBuffer.getPacketBlock()) != null){
-            carrier.sendPacket(outputStream,packet);
+            Packet packet;
+           Carrier carrier = Carrier.getInstance();
+
+            while ((packet = outBuffer.getPacketBlock()) != null){
+               carrier.sendPacket(outputStream,packet);
+            }
         }
+
+        catch (Exception e) {}
     }
 }

@@ -35,6 +35,14 @@ public class Consult{
     }
 
 
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Peding Tasks: ").append(this.pendingTasks);
+        buffer.append("\tSystemState: ").append(this.systemState.toString());
+        return buffer.toString();
+    }
+
+
     public byte[] serialize() throws IOException{
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
