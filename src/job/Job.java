@@ -11,19 +11,30 @@ import carrier.Reader;
 public class Job{
 
     private int tolerance;
+    private int memory;
     private byte[] data;
     private String result;
 
 
-    public Job(int tolerance, byte[] data){
+    public Job(int tolerance, int memory, byte[] data){
         this.tolerance = tolerance;
+        this.memory = memory;
         this.data = Arrays.copyOf(data,data.length);
         this.result = "";
     }
 
 
-    public Job(int tolerance, byte[] data, String result){
+    public Job(byte[] data, String result){
+        this.tolerance = 0;
+        this.memory = 0;
+        this.data = Arrays.copyOf(data,data.length);
+        this.result = result;
+    }
+
+
+    public Job(int tolerance, int memory, byte[] data, String result){
         this.tolerance = tolerance;
+        this.memory = memory;
         this.data = Arrays.copyOf(data,data.length);
         this.result = result;
     }
@@ -35,6 +46,7 @@ public class Job{
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
         dataOutputStream.writeInt(this.tolerance);
+        dataOutputStream.writeInt(this.memory);
         dataOutputStream.writeInt(this.data.length);
         dataOutputStream.write(this.data);
         dataOutputStream.writeUTF(this.result);
@@ -50,10 +62,11 @@ public class Job{
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
         int tolerance = dataInputStream.readInt();
+        int memory = dataInputStream.readInt();
         byte[] data = new byte[dataInputStream.readInt()];
         Reader.read(dataInputStream,data,data.length);
         String result = dataInputStream.readUTF();
 
-        return new Job(tolerance,data,result);
+        return new Job(tolerance,memory,data,result);
     }
 }

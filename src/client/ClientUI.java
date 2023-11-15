@@ -1,6 +1,7 @@
 package client;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import job.Job;
 import packets.Packet;
 import packets.UserPacket;
 import packets.Packet.Protocol;
@@ -34,10 +35,10 @@ public class ClientUI{
         Packet packet = null;
         String option, username, password;
 
-        System.out.println("1 -> Creat Account");
+        System.out.println("1 -> Creat account");
         System.out.println("2 -> Login\n");
 
-        while (packet == null && user == null){
+        while (packet == null || user == null){
 
             System.out.println(YELLOW_BOLD  + ">>> " + RESET);
             
@@ -59,6 +60,8 @@ public class ClientUI{
                             new UserPacket(Protocol.CREATE_ACCOUNT,user) :
                             new UserPacket(Protocol.LOGIN,user);
                 }
+
+                else throw new Exception();
             }
 
             catch (Exception e){
@@ -69,9 +72,41 @@ public class ClientUI{
         return packet;
     }
 
-/* 
+ 
     public Packet getJobPacket(){
 
+        Job job = null;
+        Packet packet = null;
+        String option, file;
+        int tolerance, memory;
 
-    }*/
+        System.out.println("1 -> Check server status");
+        System.out.println("2 -> Send task to server");
+
+        while (packet == null || job == null){
+
+            System.out.println(YELLOW_BOLD + ">>> " + RESET);
+
+            try{
+
+                option = this.input.readLine();
+
+                if (Integer.valueOf(option) == 1){
+
+                }
+
+                else if (Integer.valueOf(option) == 1){
+
+                }
+
+                else throw new Exception();
+            }
+
+            catch (Exception e){
+                System.out.println(RED_BOLD + "Invalid option");
+            }
+        }
+
+        return packet;
+    }
 }

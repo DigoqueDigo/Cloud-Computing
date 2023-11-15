@@ -7,9 +7,15 @@ import server.Server;
 
 public class Client{
 
+    public static String INPUT_FOLDER;
+    public static String OUTPUT_FOLDER;
+
     public static void main(String[] args){
 
         try{
+
+            Client.INPUT_FOLDER = args[0];
+            Client.OUTPUT_FOLDER = args[1];
 
             Socket socket = new Socket(Server.ServerAddrees,Server.ServerDefaultPort);
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());

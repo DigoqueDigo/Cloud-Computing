@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import carrier.Reader;
 import job.Job;
 
@@ -12,7 +11,7 @@ import job.Job;
 public class JobPacket extends Packet{
 
     private Job job;
-    private String message;
+    private String optionalMessage;
 
 
     public JobPacket(Protocol protocol, Job job){
@@ -21,10 +20,10 @@ public class JobPacket extends Packet{
     }
 
 
-    public JobPacket(Protocol protocol, Job job, String message){
+    public JobPacket(Protocol protocol, Job job, String optionalMessage){
         super(protocol);
         this.job = job;
-        this.message = message;
+        this.optionalMessage = optionalMessage;
     }
 
 
@@ -37,7 +36,7 @@ public class JobPacket extends Packet{
         dataOutputStream.writeUTF(super.getProtocol().name());
         dataOutputStream.writeInt(data_job.length);
         dataOutputStream.write(data_job);
-        dataOutputStream.writeUTF(this.message);
+        dataOutputStream.writeUTF(this.optionalMessage);
         dataOutputStream.flush();
 
         return byteArrayOutputStream.toByteArray();
@@ -52,9 +51,9 @@ public class JobPacket extends Packet{
         Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
         byte[] data_job = new byte[dataInputStream.readInt()];
         Reader.read(dataInputStream,data_job,data_job.length);
-        String message = dataInputStream.readUTF();
+        String optionalMessage = dataInputStream.readUTF();
 
-        return new JobPacket(protocol,Job.deserialize(data_job),message);
+        return new JobPacket(protocol,Job.deserialize(data_job),optionalMessage);
     }
 
 

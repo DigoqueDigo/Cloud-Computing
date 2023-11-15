@@ -10,8 +10,5 @@ public class ClientWorker{
     public ClientWorker(Buffer inBuffer, Buffer outBuffer){
         this.inBuffer = inBuffer;
         this.outBuffer = outBuffer;
-    }
-
-
-    
+    }   
 }

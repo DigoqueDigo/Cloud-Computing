@@ -11,20 +11,20 @@ import user.User;
 public class UserPacket extends Packet{
 
     private User user;
-    private String message;
+    private String optionalMessage;
 
 
     public UserPacket(Protocol protocol, User user){
         super(protocol);
         this.user = user;
-        this.message = "";
+        this.optionalMessage = "";
     }
 
 
-    public UserPacket(Protocol protocol, User user, String message){
+    public UserPacket(Protocol protocol, User user, String optionalMessage){
         super(protocol);
         this.user = user;
-        this.message = message;
+        this.optionalMessage = optionalMessage;
     }
 
 
@@ -32,13 +32,13 @@ public class UserPacket extends Packet{
         return this.user;
     }
 
-    public String getMessage(){
-        return this.message;
+    public String getoptionalMessage(){
+        return this.optionalMessage;
     }
 
 
-    public void setMessage(String message){
-        this.message = message;
+    public void setOptionalMessage(String optionalMessage){
+        this.optionalMessage = optionalMessage;
     }
 
 
@@ -49,7 +49,7 @@ public class UserPacket extends Packet{
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
         dataOutputStream.writeUTF(super.getProtocol().name());
-        dataOutputStream.writeUTF(this.message);
+        dataOutputStream.writeUTF(this.optionalMessage);
         dataOutputStream.writeInt(data_user.length);
         dataOutputStream.write(data_user);
         dataOutputStream.flush();
@@ -64,11 +64,11 @@ public class UserPacket extends Packet{
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
         Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
-        String message = dataInputStream.readUTF();
+        String optionalMessage = dataInputStream.readUTF();
         byte[] data_user = new byte[dataInputStream.readInt()];
         Reader.read(dataInputStream,data_user,data_user.length);
 
-        return new UserPacket(protocol,User.deserialize(data_user),message);
+        return new UserPacket(protocol,User.deserialize(data_user),optionalMessage);
     }
 
 

@@ -31,7 +31,7 @@ public class ServerClientWorkerReader implements Runnable{
                 
                 if (!this.serverContainer.addUser(user)){
                     packet.setProtocol(Protocol.ERROR);
-                    packet.setMessage("Username already in use");
+                    packet.setOptionalMessage("Username already in use");
                 }
                 
                 break;
@@ -40,7 +40,7 @@ public class ServerClientWorkerReader implements Runnable{
                 
                 if (!user.equals(this.serverContainer.getUser(user.getUsername()))){
                     packet.setProtocol(Protocol.ERROR);
-                    packet.setMessage("Invalid password");
+                    packet.setOptionalMessage("Invalid password");
                 }
                 
                 break;
