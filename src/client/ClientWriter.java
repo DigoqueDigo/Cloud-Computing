@@ -21,7 +21,7 @@ public class ClientWriter implements Runnable{
         Packet packet;
         Carrier carrier = Carrier.getInstance();
 
-        while ((packet = outBuffer.getPacket()) != null){
+        while ((packet = outBuffer.getPacketBlock()) != null){
             carrier.sendPacket(outputStream,packet);
         }
     }

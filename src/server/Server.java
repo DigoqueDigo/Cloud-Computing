@@ -2,7 +2,7 @@ package server;
 import java.net.ServerSocket;
 import java.net.Socket;
 import server.containers.ServerContainer;
-import server.workers.ServerWorker;
+import server.workers.ServerHandler;
 
 
 public class Server{
@@ -19,7 +19,7 @@ public class Server{
             ServerSocket serverSocket = new ServerSocket(ServerDefaultPort);
             
             while ((socket = serverSocket.accept()) != null){
-                new Thread(new ServerWorker(socket,serverContainer)).start();
+                new Thread(new ServerHandler(socket,serverContainer)).start();
             }
 
             serverSocket.close();

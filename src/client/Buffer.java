@@ -34,7 +34,7 @@ public class Buffer{
     }
 
 
-    public Packet getPacket(){
+    public Packet getPacketBlock(){
 
         try{
 
@@ -47,6 +47,28 @@ public class Buffer{
             Packet packet = this.buffer.get(this.buffer.size()-1);
             this.buffer.remove(this.buffer.size()-1);
             return packet;
+        }
+
+        catch (Exception e) {return null;}
+
+        finally {this.lock.unlock();}
+    }
+
+
+    public Packet getPacketNonBlock(){
+
+        try{
+
+            Packet packet = null;
+            this.lock.lock();
+
+            if (this.buffer.size() != 0){
+                packet = this.buffer.get(this.buffer.size()-1);
+                this.buffer.remove(this.buffer.size()-1);
+            }
+
+            return packet;
+
         }
 
         catch (Exception e) {return null;}

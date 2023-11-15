@@ -9,8 +9,8 @@ import java.util.UUID;
 import carrier.Carrier;
 import packets.Packet;
 import server.containers.ServerContainer;
-import server.workers.client.ServerClientWorkerReader;
 import server.workers.client.ServerClientWorkerWriter;
+import server.workers.client.ServerClientWorkerReader;
 import server.workers.machine.ServerMachineWorker;
 
 
@@ -43,8 +43,8 @@ public class ServerHandler implements Runnable{
 
                 case USER:
                     
-                    ServerClientWorkerWriter workerWriter = new ServerClientWorkerWriter(nonce,serverContainer,inputstream);
-                    ServerClientWorkerReader workerReader = new ServerClientWorkerReader(nonce,serverContainer,outputStream);
+                    ServerClientWorkerReader workerWriter = new ServerClientWorkerReader(nonce,serverContainer,inputstream);
+                    ServerClientWorkerWriter workerReader = new ServerClientWorkerWriter(nonce,serverContainer,outputStream);
 
                     threads.add(new Thread(workerReader));
                     threads.add(new Thread(workerWriter));

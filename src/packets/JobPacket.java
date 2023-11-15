@@ -4,75 +4,61 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import carrier.Reader;
-import user.User;
+import job.Job;
 
 
-public class UserPacket extends Packet{
+public class JobPacket extends Packet{
 
-    private User user;
+    private Job job;
     private String message;
 
 
-    public UserPacket(Protocol protocol, User user){
+    public JobPacket(Protocol protocol, Job job){
         super(protocol);
-        this.user = user;
-        this.message = "";
+        this.job = job;
     }
 
 
-    public UserPacket(Protocol protocol, User user, String message){
+    public JobPacket(Protocol protocol, Job job, String message){
         super(protocol);
-        this.user = user;
-        this.message = message;
-    }
-
-
-    public User getUser(){
-        return this.user;
-    }
-
-    public String getMessage(){
-        return this.message;
-    }
-
-
-    public void setMessage(String message){
+        this.job = job;
         this.message = message;
     }
 
 
     public byte[] serialize() throws IOException{
 
-        byte[] data_user = this.user.serialize();
+        byte[] data_job = this.job.serialize();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
         dataOutputStream.writeUTF(super.getProtocol().name());
+        dataOutputStream.writeInt(data_job.length);
+        dataOutputStream.write(data_job);
         dataOutputStream.writeUTF(this.message);
-        dataOutputStream.writeInt(data_user.length);
-        dataOutputStream.write(data_user);
         dataOutputStream.flush();
 
         return byteArrayOutputStream.toByteArray();
     }
-    
-    
-    private static UserPacket deserializePrivate(byte[] data) throws IOException{
+
+
+    private static JobPacket deserializePrivate(byte[] data) throws IOException{
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
         Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
+        byte[] data_job = new byte[dataInputStream.readInt()];
+        Reader.read(dataInputStream,data_job,data_job.length);
         String message = dataInputStream.readUTF();
-        byte[] data_user = new byte[dataInputStream.readInt()];
-        Reader.read(dataInputStream,data_user,data_user.length);
 
-        return new UserPacket(protocol,User.deserialize(data_user),message);
+        return new JobPacket(protocol,Job.deserialize(data_job),message);
     }
 
 
-    public UserPacket deserialize(byte[] data) throws IOException{
-        return UserPacket.deserializePrivate(data);
-    }
+    public JobPacket deserialize(byte[] data) throws IOException{
+        return JobPacket.deserializePrivate(data);
+    }    
 }

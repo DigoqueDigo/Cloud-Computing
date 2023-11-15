@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public abstract class Packet{
 
-    public enum Protocol {LOGIN, CREATE_ACCOUNT, USER, MACHINE, ERROR};
+    public enum Protocol {LOGIN, CREATE_ACCOUNT, USER, MACHINE, JOB, CONSULT, ERROR};
     private Protocol protocol;
 
     public Packet(Protocol protocol){
