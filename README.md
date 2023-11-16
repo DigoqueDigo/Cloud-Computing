@@ -2,7 +2,7 @@
 
 ## Server
 
-```
+```bash
 java -cp bin server.Server
 ```
 

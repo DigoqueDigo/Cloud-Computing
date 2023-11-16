@@ -80,7 +80,10 @@ public class ServerClientWorkerReader implements Runnable{
                     welcomeHandler(packet);
                 }
 
-                else jobHandler(packet);
+                else{
+                    System.out.println(packet);
+                    System.out.println("Por implementar");
+                }
             }
         }
 

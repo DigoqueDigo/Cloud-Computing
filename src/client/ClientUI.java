@@ -35,12 +35,25 @@ public class ClientUI{
         if (ClientUI.singleton == null) ClientUI.singleton = new ClientUI();
         return ClientUI.singleton;
     }
+    
+    
+    public void showInvalidFolder(){
+        System.out.println(RED_BOLD + "Invalid folder" + RESET);
+    }
 
 
     public void showPacketMessage(Packet packet){        
         if (packet.getProtocol() != Protocol.ERROR)
             System.out.println(GREEN_BOLD + packet.getOptionalMessage() + RESET);
         else System.out.println(RED_BOLD + packet.getOptionalMessage() + RESET);
+    }
+
+
+    public void checkFolders(String inForlder, String outFolder) throws FileNotFoundException{
+        File in = new File(inForlder), out = new File(outFolder);
+        if (!(in.exists() && in.isDirectory() && out.exists() && out.isDirectory())){
+            throw new FileNotFoundException();
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package client;
 import java.io.EOFException;
+import java.io.FileNotFoundException;
 import packets.HelloPacket;
 import packets.Packet;
 import packets.Packet.Protocol;
@@ -25,7 +26,8 @@ public class ClientWorker{
             
             Packet packetReceive = null;
             Packet packetSend = new HelloPacket(Protocol.USER); // envia o pacote a dizer que é um client
-            
+
+            this.clientUI.checkFolders(Client.INPUT_FOLDER,Client.OUTPUT_FOLDER);
             this.outBuffer.addPacket(packetSend);
             System.out.println(packetSend);
 
@@ -50,6 +52,11 @@ public class ClientWorker{
         }
 
         catch (EOFException e){
+            this.outBuffer.addPacket(null);
+        }
+
+        catch (FileNotFoundException e){
+            this.clientUI.showInvalidFolder();
             this.outBuffer.addPacket(null);
         }
     }
