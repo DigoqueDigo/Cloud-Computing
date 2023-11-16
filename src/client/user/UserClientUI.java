@@ -19,8 +19,8 @@ public class UserClientUI{
     private static final String RESET = "\033[0m";
     private static final String RED_BOLD = "\033[1;31m";
     private static final String YELLOW_BOLD = "\033[1;33m";
-    public static final String WHITE_BOLD = "\033[1;37m";
-    public static final String GREEN_BOLD = "\033[1;32m";
+    private static final String WHITE_BOLD = "\033[1;37m";
+    private static final String GREEN_BOLD = "\033[1;32m";
 
     private static UserClientUI singleton = null;
     private BufferedReader input;
