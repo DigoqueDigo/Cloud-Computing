@@ -1,22 +1,23 @@
-package client;
+package client.user;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
+import buffer.Buffer;
 import packets.HelloPacket;
 import packets.Packet;
 import packets.Packet.Protocol;
 
 
-public class ClientWorker{
+public class UserClientWorker{
 
     private Buffer inBuffer;
     private Buffer outBuffer;
-    private ClientUI clientUI;
+    private UserClientUI clientUI;
 
 
-    public ClientWorker(Buffer inBuffer, Buffer outBuffer){
+    public UserClientWorker(Buffer inBuffer, Buffer outBuffer){
         this.inBuffer = inBuffer;
         this.outBuffer = outBuffer;
-        this.clientUI = ClientUI.getInstance();
+        this.clientUI = UserClientUI.getInstance();
     }
 
 
@@ -27,7 +28,7 @@ public class ClientWorker{
             Packet packetReceive = null;
             Packet packetSend = new HelloPacket(Protocol.USER); // envia o pacote a dizer que é um client
 
-            this.clientUI.checkFolders(Client.INPUT_FOLDER,Client.OUTPUT_FOLDER);
+            this.clientUI.checkFolders(UserClient.INPUT_FOLDER,UserClient.OUTPUT_FOLDER);
             this.outBuffer.addPacket(packetSend);
             System.out.println(packetSend);
 

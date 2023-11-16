@@ -1,20 +1,20 @@
-package client;
+package client.user;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+
 import job.Job;
 import packets.ConsultPacket;
 import packets.JobPacket;
 import packets.Packet;
 import packets.UserPacket;
 import packets.Packet.Protocol;
-import user.User;
 
 
-public class ClientUI{
+public class UserClientUI{
 
     private static final String RESET = "\033[0m";
     private static final String RED_BOLD = "\033[1;31m";
@@ -22,18 +22,18 @@ public class ClientUI{
     public static final String WHITE_BOLD = "\033[1;37m";
     public static final String GREEN_BOLD = "\033[1;32m";
 
-    private static ClientUI singleton = null;
+    private static UserClientUI singleton = null;
     private BufferedReader input;
 
     
-    private ClientUI(){
+    private UserClientUI(){
         this.input = new BufferedReader(new InputStreamReader(System.in));
     }
 
 
-    public static ClientUI getInstance(){
-        if (ClientUI.singleton == null) ClientUI.singleton = new ClientUI();
-        return ClientUI.singleton;
+    public static UserClientUI getInstance(){
+        if (UserClientUI.singleton == null) UserClientUI.singleton = new UserClientUI();
+        return UserClientUI.singleton;
     }
     
     
@@ -126,7 +126,7 @@ public class ClientUI{
                 System.out.print(YELLOW_BOLD + "Enter task file: " + RESET);
                 filename = this.input.readLine();
 
-                File file = new File(Client.INPUT_FOLDER + filename);
+                File file = new File(UserClient.INPUT_FOLDER + filename);
 
                 if (!file.exists()) throw new FileNotFoundException();
 

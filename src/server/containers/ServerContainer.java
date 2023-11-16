@@ -1,7 +1,7 @@
 package server.containers;
+import client.user.User;
 import job.Job;
 import packets.Packet;
-import user.User;
 
 
 public class ServerContainer{

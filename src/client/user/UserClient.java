@@ -1,11 +1,14 @@
-package client;
+package client.user;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import buffer.Buffer;
+import buffer.SocketToBuffer;
+import buffer.BufferToSocket;
 import server.Server;
 
 
-public class Client{
+public class UserClient{
 
     public static String INPUT_FOLDER;
     public static String OUTPUT_FOLDER;
@@ -14,8 +17,8 @@ public class Client{
 
         try{
 
-            Client.INPUT_FOLDER = args[0];
-            Client.OUTPUT_FOLDER = args[1];
+            UserClient.INPUT_FOLDER = args[0];
+            UserClient.OUTPUT_FOLDER = args[1];
 
             Buffer inBuffer = new Buffer();
             Buffer outBuffer = new Buffer();
@@ -24,9 +27,9 @@ public class Client{
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
           
-            ClientWorker clientWorker = new ClientWorker(inBuffer,outBuffer);
-            Thread clientReader = new Thread(new ClientReader(inBuffer,inputStream));
-            Thread clientWriter = new Thread(new ClientWriter(outBuffer,outputStream));
+            UserClientWorker clientWorker = new UserClientWorker(inBuffer,outBuffer);
+            Thread clientReader = new Thread(new SocketToBuffer(inBuffer,inputStream));
+            Thread clientWriter = new Thread(new BufferToSocket(outBuffer,outputStream));
 
             clientReader.start();
             clientWriter.start();

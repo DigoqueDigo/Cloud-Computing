@@ -1,13 +1,13 @@
 package server.workers.client;
 import java.io.DataInputStream;
 import carrier.Carrier;
+import client.user.User;
 import packets.ConsultPacket;
 import packets.JobPacket;
 import packets.Packet;
 import packets.UserPacket;
 import packets.Packet.Protocol;
 import server.containers.ServerContainer;
-import user.User;
 
 
 public class ServerClientWorkerReader implements Runnable{

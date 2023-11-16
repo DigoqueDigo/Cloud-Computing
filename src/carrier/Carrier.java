@@ -5,6 +5,7 @@ import java.io.IOException;
 import packets.ConsultPacket;
 import packets.HelloPacket;
 import packets.JobPacket;
+import packets.MachinePacket;
 import packets.Packet;
 import packets.UserPacket;
 import packets.Packet.Type;
@@ -28,6 +29,7 @@ public class Carrier{
         if (packet instanceof HelloPacket) dataOutputStream.writeUTF(Type._HELLO_.name());
         else if (packet instanceof UserPacket) dataOutputStream.writeUTF(Type._USER_.name());
         else if (packet instanceof ConsultPacket) dataOutputStream.writeUTF(Type._CONSULT_.name());
+        else if (packet instanceof MachinePacket) dataOutputStream.writeUTF(Type._MACHINE_.name());
         else dataOutputStream.writeUTF(Type._JOB_.name());
 
         byte[] data = packet.serialize();
@@ -60,6 +62,10 @@ public class Carrier{
 
             case _CONSULT_:
                 resultPacket = ConsultPacket.deserialize(data);
+                break;
+
+            case _MACHINE_:
+                resultPacket = MachinePacket.deserialize(data);
                 break;
 
             default:

@@ -1,4 +1,4 @@
-package client;
+package buffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;

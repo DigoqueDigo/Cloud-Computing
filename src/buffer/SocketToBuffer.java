@@ -1,16 +1,17 @@
-package client;
+package buffer;
 import java.io.DataInputStream;
+
 import carrier.Carrier;
 import packets.Packet;
 
 
-public class ClientReader implements Runnable{
+public class SocketToBuffer implements Runnable{
 
     private Buffer inBuffer; 
     private DataInputStream inputStream;   
 
     
-    public ClientReader(Buffer inBuffer, DataInputStream inputStream){
+    public SocketToBuffer(Buffer inBuffer, DataInputStream inputStream){
         this.inBuffer = inBuffer;
         this.inputStream = inputStream;
     }

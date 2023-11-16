@@ -5,65 +5,52 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import carrier.Reader;
-import client.user.User;
+import client.machine.Machine;
 
 
-public class UserPacket extends Packet{
+public class MachinePacket extends Packet{
 
-    private User user;
+    private Machine machine;
 
 
-    public UserPacket(Protocol protocol, User user){
+    public MachinePacket(Protocol protocol, Machine machine){
         super(protocol);
-        this.user = user;
+        this.machine = machine;
     }
 
 
-    public UserPacket(Protocol protocol, String optionalMessage, User user){
+    public MachinePacket(Protocol protocol, String optionalMessage, Machine machine){
         super(protocol,optionalMessage);
-        this.user = user;
-    }
-
-
-    public User getUser(){
-        return this.user;
-    }
-
-
-    public String toString(){
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(super.toString());
-        buffer.append("\nUser: ").append(this.user.toString());
-        return buffer.toString();
+        this.machine = machine;
     }
 
 
     public byte[] serialize() throws IOException{
 
-        byte[] data_user = this.user.serialize();
+        byte[] data_machine = this.machine.serialize();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
         dataOutputStream.writeUTF(super.getProtocol().name());
         dataOutputStream.writeUTF(super.getOptionalMessage());
-        dataOutputStream.writeInt(data_user.length);
-        dataOutputStream.write(data_user);
+        dataOutputStream.writeInt(data_machine.length);
+        dataOutputStream.write(data_machine);
         dataOutputStream.flush();
 
         return byteArrayOutputStream.toByteArray();
     }
-    
-    
-    public static UserPacket deserialize(byte[] data) throws IOException{
+
+
+    public static MachinePacket deserialize(byte[] data) throws IOException{
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
         Protocol protocol = Protocol.valueOf(dataInputStream.readUTF());
         String optionalMessage = dataInputStream.readUTF();
-        byte[] data_user = new byte[dataInputStream.readInt()];
-        Reader.read(dataInputStream,data_user,data_user.length);
+        byte[] data_machine = new byte[dataInputStream.readInt()];
+        Reader.read(dataInputStream,data_machine,data_machine.length);
 
-        return new UserPacket(protocol,optionalMessage,User.deserialize(data_user));
+        return new MachinePacket(protocol,optionalMessage,Machine.deserialize(data_machine));
     }
 }
