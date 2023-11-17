@@ -1,20 +1,23 @@
 package server.containers;
+import client.machine.Machine;
 import client.user.User;
-import job.Job;
+import packets.JobPacket;
 import packets.Packet;
+import server.schedule.Schedule;
 
 
 public class ServerContainer{
 
+    private Schedule schedule;
     private UserContainer userContainer;
     private ResultContainer resultContainer;
-    private JobContainer jobContainer;
+    private MachineContainer machineContainer;
 
 
     public ServerContainer(){
         this.userContainer = new UserContainer();
         this.resultContainer = new ResultContainer();
-        this.jobContainer = new JobContainer();
+        this.machineContainer = new MachineContainer();
     }
 
     public boolean addUser(User user){
@@ -33,11 +36,18 @@ public class ServerContainer{
         return this.resultContainer.getResultPacket(nonce);
     }
 
-    public void addJob(Job job){
-        this.jobContainer.addJob(job);
+    public void addJobPacket(JobPacket jobPacket){
+        this.schedule.addJobPacket(jobPacket);
     }
 
-    public Job getJob(){
-        return this.jobContainer.getJob();
+    public void removeJobPacket(JobPacket jobPacket){
+        this.machineContainer.removeJobPacket(jobPacket);
+        this.schedule.activateSignalAll();
+    }
+
+    public boolean addMachine(Machine machine){
+        boolean result = this.machineContainer.addMachine(machine);
+        if (result) this.schedule.activateSignalAll();
+        return result;
     }
 }

@@ -57,7 +57,7 @@ public class ServerClientWorkerReader implements Runnable{
 
             case JOB:
                 JobPacket jobPacket = (JobPacket) packet;
-                this.serverContainer.addJob(jobPacket.getJob());
+                this.serverContainer.addJobPacket(jobPacket);
                 break;
         
             default:
@@ -80,10 +80,7 @@ public class ServerClientWorkerReader implements Runnable{
                     welcomeHandler(packet);
                 }
 
-                else{
-                    System.out.println(packet);
-                    System.out.println("Por implementar");
-                }
+                else jobHandler(packet);
             }
         }
 

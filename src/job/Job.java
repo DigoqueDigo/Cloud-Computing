@@ -17,26 +17,36 @@ public class Job{
 
 
     public Job(int tolerance, int memory, byte[] data){
-        this.tolerance = tolerance;
         this.memory = memory;
+        this.tolerance = tolerance;
         this.data = Arrays.copyOf(data,data.length);
         this.result = "";
     }
 
 
     public Job(byte[] data, String result){
-        this.tolerance = 0;
         this.memory = 0;
+        this.tolerance = 0;
         this.data = Arrays.copyOf(data,data.length);
         this.result = result;
     }
 
 
     public Job(int tolerance, int memory, byte[] data, String result){
-        this.tolerance = tolerance;
         this.memory = memory;
+        this.tolerance = tolerance;
         this.data = Arrays.copyOf(data,data.length);
         this.result = result;
+    }
+
+
+    public int getTolerance(){
+        return this.tolerance;
+    }
+
+
+    public int getMemory(){
+        return this.memory;
     }
 
 
