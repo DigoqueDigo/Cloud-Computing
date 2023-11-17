@@ -24,6 +24,8 @@ public class ScheduleWorker implements Runnable{
             if (this.machineContainer.addJobPacket(jobPacket)){
                 this.schedule.removeJobPacket();
             }
+
+            else this.schedule.activateAwait();
         }
     }
 }

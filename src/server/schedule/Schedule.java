@@ -95,4 +95,10 @@ public class Schedule{
     public void activateSignalAll(){
         this.condition.signalAll();
     }
+
+
+    public void activateAwait(){
+        try {this.condition.await();}
+        catch (Exception e) {}
+    }
 }
