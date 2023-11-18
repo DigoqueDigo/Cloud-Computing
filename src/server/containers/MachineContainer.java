@@ -6,23 +6,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 import client.machine.Machine;
 import packets.JobPacket;
+import packets.Packet;
 
 
 public class MachineContainer{
 
     private ReentrantLock lock;
     private Condition condition;
-    private Map<Machine,List<JobPacket>> waitContainer;
-    private Map<Machine,List<JobPacket>> inExcecutionContainer;
+    private Map<Machine,List<JobPacket>> packets;
 
 
     public MachineContainer(){
         this.lock = new ReentrantLock();
         this.condition = this.lock.newCondition();
-        this.waitContainer = new HashMap<Machine,List<JobPacket>>();
-        this.inExcecutionContainer = new HashMap<Machine,List<JobPacket>>();
+        this.packets = new HashMap<Machine,List<JobPacket>>();
     }
 
 
@@ -31,7 +31,7 @@ public class MachineContainer{
         Comparator<Machine> comparator = (x,y) -> 
             Integer.compare(x.getAvaiableMemory(),y.getAvaiableMemory());
 
-        return this.waitContainer.entrySet()
+        return this.packets.entrySet()
                 .stream()
                 .map(x -> x.getKey())
                 .filter(x -> x.getAvaiableMemory() >= minMemory)
@@ -41,22 +41,14 @@ public class MachineContainer{
     }
 
 
-    public boolean addMachine(Machine machine){
+    public void addMachine(Machine machine){
 
         try{
             this.lock.lock();
-            boolean result = this.waitContainer.containsKey(machine);
-            
-            if (!result){
-                this.waitContainer.put(machine,new ArrayList<JobPacket>());
-                this.inExcecutionContainer.put(machine,new ArrayList<JobPacket>());
-            }
-
-            return !result;
+            this.packets.putIfAbsent(machine,new ArrayList<JobPacket>());
         }
 
-        catch (Exception e) {return false;}
-
+        catch (Exception e) {}
         finally {this.lock.unlock();}
     }
 
@@ -64,70 +56,88 @@ public class MachineContainer{
     public boolean addJobPacket(JobPacket jobPacket){
 
         try{
-            
+
             this.lock.lock();
             Machine machine = this.getAvaiableMachine(jobPacket.getJob().getMemory());
 
             if (machine != null){
-                this.waitContainer.get(machine).add(jobPacket);
+                
+                jobPacket.setMachineNonce(machine.getIdentifier());
                 machine.decreaseMemory(jobPacket.getJob().getMemory());
+                
+                this.packets.get(machine).add(jobPacket);
                 this.condition.signalAll();
             }
-
+            
             return machine != null;
         }
 
         catch (Exception e) {return false;}
-
         finally {this.lock.unlock();}
     }
 
 
-    public JobPacket getJobPacket(Machine machine){
+    public Packet getPacket(Machine machine){
 
         try{
             
             this.lock.lock();
-            
-            List<JobPacket> jobPackets = this.waitContainer.get(machine); 
-            JobPacket jobPacket = jobPackets.get(jobPackets.size()-1);
+            List<JobPacket> list_packets = this.packets.get(machine); 
 
-            while (jobPacket != null){
+            while (list_packets.size() == 0){
                 this.condition.await();
-                jobPackets = this.waitContainer.get(machine);
-                jobPacket = jobPackets.get(jobPackets.size()-1);
+                list_packets = this.packets.get(machine);
             }
 
-            this.inExcecutionContainer.get(machine).add(jobPacket);
-            this.waitContainer.get(machine).remove(jobPackets.size()-1);
+            Packet packet = list_packets.get(0);
+            list_packets.remove(0);
 
-            return jobPacket;
+            return packet;
         }
 
         catch (Exception e) {return null;}
-
         finally {this.lock.unlock();}
     }
 
 
-    public void removeJobPacket(JobPacket jobPacket){
+    public void finalizeJobPacket(JobPacket jobPacket){
 
         try{
 
             this.lock.lock();
-            
-            Machine machine = this.inExcecutionContainer.entrySet()
+            this.packets.keySet()
                 .stream()
-                .filter(x -> x.getValue().contains(jobPacket))
-                .map(x -> x.getKey())
-                .findFirst()
-                .orElse(null);
-
-            if (machine != null) machine.decreaseMemory(jobPacket.getJob().getMemory());
+                .filter(x -> x.getIdentifier().equals(jobPacket.getMachineNonce()))
+                .forEach(x -> x.increaseMemory(jobPacket.getJob().getMemory()));
         }
 
         catch (Exception e) {}
+        finally {this.lock.unlock();}
+    }
 
+
+    public int getPendingJobs(){
+        
+        try{
+            this.lock.lock();
+            return this.packets.values().stream().mapToInt(x -> x.size()).sum();
+        }
+
+        catch (Exception e) {return -1;}
+        finally {this.lock.unlock();}
+    }
+
+
+    public Map<String,Integer> getSystemState(){
+
+        try{
+            this.lock.lock();
+            return this.packets.keySet().stream().collect(Collectors.toMap(
+                x -> x.getIdentifier(),
+                x -> x.getAvaiableMemory()));
+        }
+
+        catch (Exception e) {return null;}
         finally {this.lock.unlock();}
     }
 }

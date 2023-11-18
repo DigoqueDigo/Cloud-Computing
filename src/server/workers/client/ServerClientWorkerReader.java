@@ -1,7 +1,9 @@
 package server.workers.client;
 import java.io.DataInputStream;
+import java.util.Map;
 import carrier.Carrier;
 import client.user.User;
+import job.Consult;
 import packets.ConsultPacket;
 import packets.JobPacket;
 import packets.Packet;
@@ -24,46 +26,57 @@ public class ServerClientWorkerReader implements Runnable{
     }
 
 
-    private void welcomeHandler(Packet packet) throws Exception{
+    private void loginHandler(Packet packet){
 
         Packet resultPacket;
         User user = ((UserPacket) packet).getUser();
-        System.out.println(packet);
-        
-        if (packet.getProtocol() == Protocol.CREATE_ACCOUNT){
 
-            resultPacket = (!this.serverContainer.addUser(user)) ?
-                new UserPacket(Protocol.ERROR,"Username already in use",user) :
-                new UserPacket(Protocol.CREATE_ACCOUNT,"Account successfully created",user);
-        }
-
-        else if (this.serverContainer.getUser(user.getUsername()) == null){
+        if (this.serverContainer.getUser(user.getUsername()) == null)
             resultPacket = new UserPacket(Protocol.ERROR,"Unknown username",user);
-        }
             
-        else if (!user.equals(this.serverContainer.getUser(user.getUsername()))){
+        else if (!user.equals(this.serverContainer.getUser(user.getUsername())))
             resultPacket = new UserPacket(Protocol.ERROR,"Invalid password",user);
-        }
 
         else resultPacket = new UserPacket(Protocol.LOGIN,"Login successful",user);
+        this.serverContainer.addResultPacket(this.nonce,resultPacket);
+    }
+
+
+    private void createAccountHandler(Packet packet){
+
+        User user = ((UserPacket) packet).getUser();
+
+        Packet resultPacket = (!this.serverContainer.addUser(user)) ?
+                new UserPacket(Protocol.ERROR,"Username already in use",user) :
+                new UserPacket(Protocol.CREATE_ACCOUNT,"Account successfully created",user);
 
         this.serverContainer.addResultPacket(this.nonce,resultPacket);
     }
 
 
-    private void jobHandler(Packet packet){
-
-        switch (packet.getProtocol()){
-
-            case JOB:
-                JobPacket jobPacket = (JobPacket) packet;
-                this.serverContainer.addJobPacket(jobPacket);
-                break;
+    private void consultHandler(Packet packet){
         
-            default:
-                this.serverContainer.addResultPacket(nonce, new ConsultPacket(Protocol.ERROR)); // por implementar
-                break;
-        }
+        int pendingJobs = this.serverContainer.getPendingJobs();
+        Map<String,Integer> systemSate = this.serverContainer.getSystemState();
+
+        Packet resutPacket = (pendingJobs != -1 && systemSate != null) ?
+            new ConsultPacket(Protocol.CONSULT,new Consult(pendingJobs,systemSate)) :
+            new ConsultPacket(Protocol.ERROR);
+
+        this.serverContainer.addResultPacket(this.nonce,resutPacket);
+    }
+
+
+    private void jobHandler(Packet packet){
+        JobPacket jobPacket = (JobPacket) packet;
+        jobPacket.setClientNonce(this.nonce);
+        this.serverContainer.addJobPacket(jobPacket);
+    }
+
+
+    private void jobCompletedHandler(Packet packet){
+        JobPacket jobPacket = (JobPacket) packet;
+        this.serverContainer.addResultPacket(jobPacket.getClientNonce(),jobPacket);
     }
 
 
@@ -76,11 +89,31 @@ public class ServerClientWorkerReader implements Runnable{
 
             while ((packet = carrier.receivePacket(inputStream)) != null){
 
-                if (packet.getProtocol() == Protocol.LOGIN || packet.getProtocol() == Protocol.CREATE_ACCOUNT){
-                    welcomeHandler(packet);
-                }
+                switch (packet.getProtocol()){
 
-                else jobHandler(packet);
+                    case LOGIN:
+                        loginHandler(packet);
+                        break;
+
+                    case CREATE_ACCOUNT:
+                        createAccountHandler(packet);
+                        break;
+                        
+                    case CONSULT:
+                        consultHandler(packet);
+                        break;
+
+                    case JOB:
+                        jobHandler(packet);
+                        break;
+
+                    case JOB_COMPLETED:
+                        jobCompletedHandler(packet);
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
 

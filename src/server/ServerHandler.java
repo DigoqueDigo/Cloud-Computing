@@ -10,7 +10,8 @@ import carrier.Carrier;
 import packets.Packet;
 import server.containers.ServerContainer;
 import server.workers.client.ServerClientWorkerWriter;
-import server.workers.machine.ServerMachineWorker;
+import server.workers.machine.ServerMachineWorkerReader;
+import server.workers.machine.ServerMachineWorkerWriter;
 import server.workers.client.ServerClientWorkerReader;
 
 
@@ -18,14 +19,14 @@ public class ServerHandler implements Runnable{
 
     private Socket socket;
     private ServerContainer serverContainer;
-    private DataInputStream inputstream;
+    private DataInputStream inputStream;
     private DataOutputStream outputStream;
 
 
     public ServerHandler(Socket socket, ServerContainer serverContainer) throws IOException{
         this.socket = socket;
         this.serverContainer = serverContainer;
-        this.inputstream = new DataInputStream(socket.getInputStream());
+        this.inputStream = new DataInputStream(socket.getInputStream());
         this.outputStream = new DataOutputStream(socket.getOutputStream());
     };
 
@@ -36,27 +37,32 @@ public class ServerHandler implements Runnable{
 
             Carrier carrier = Carrier.getInstance();
             String nonce = UUID.randomUUID().toString();
-            Packet packet = carrier.receivePacket(this.inputstream);
+            Packet packet = carrier.receivePacket(this.inputStream);
             
             System.out.println(packet);
             
             List<Thread> threads = new ArrayList<Thread>();
-
+            
             switch (packet.getProtocol()){
+                
+                case CONNECT_USER:
+                
+                    ServerClientWorkerReader clientWorkerWriter = new ServerClientWorkerReader(nonce,serverContainer,inputStream);
+                    ServerClientWorkerWriter clientWorkerReader = new ServerClientWorkerWriter(nonce,serverContainer,outputStream);
 
-                case USER:
-                    
-                    ServerClientWorkerReader workerWriter = new ServerClientWorkerReader(nonce,serverContainer,inputstream);
-                    ServerClientWorkerWriter workerReader = new ServerClientWorkerWriter(nonce,serverContainer,outputStream);
-
-                    threads.add(new Thread(workerReader));
-                    threads.add(new Thread(workerWriter));
+                    threads.add(new Thread(clientWorkerReader));
+                    threads.add(new Thread(clientWorkerWriter));
 
                     break;
 
-                case MACHINE:
-                    ServerMachineWorker serverMachineWorker = new ServerMachineWorker(serverContainer,inputstream,outputStream);
-                    serverMachineWorker.execute();
+                case CONNECT_MACHINE:
+
+                    ServerMachineWorkerReader machineWorkerReader = new ServerMachineWorkerReader(nonce,serverContainer,inputStream);
+                    ServerMachineWorkerWriter machineWorkerWriter = new ServerMachineWorkerWriter(nonce,serverContainer,outputStream);
+
+                    threads.add(new Thread(machineWorkerReader));
+                    threads.add(new Thread(machineWorkerWriter));
+
                     break;
 
                 default:

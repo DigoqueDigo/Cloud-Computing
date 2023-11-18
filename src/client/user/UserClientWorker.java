@@ -26,7 +26,7 @@ public class UserClientWorker{
         try{
             
             Packet packetReceive = null;
-            Packet packetSend = new HelloPacket(Protocol.USER); // envia o pacote a dizer que é um client
+            Packet packetSend = new HelloPacket(Protocol.CONNECT_USER); // envia o pacote a dizer que é um client
 
             this.clientUI.checkFolders(UserClient.INPUT_FOLDER,UserClient.OUTPUT_FOLDER);
             this.outBuffer.addPacket(packetSend);

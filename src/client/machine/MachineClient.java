@@ -16,7 +16,7 @@ public class MachineClient{
 
             Buffer inBuffer = new Buffer();
             Buffer outBuffer = new Buffer();
-            Machine machine = new Machine(args[0],Integer.valueOf(args[1]));
+            Machine machine = new Machine(Integer.valueOf(args[0]));
 
             Socket socket = new Socket(Server.ServerAddrees,Server.ServerDefaultPort);
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());

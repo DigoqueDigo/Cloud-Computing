@@ -25,6 +25,11 @@ public class MachinePacket extends Packet{
     }
 
 
+    public Machine getMachine(){
+        return this.machine;
+    }
+
+
     public byte[] serialize() throws IOException{
 
         byte[] data_machine = this.machine.serialize();

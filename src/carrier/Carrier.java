@@ -28,8 +28,8 @@ public class Carrier{
 
         if (packet instanceof HelloPacket) dataOutputStream.writeUTF(Type._HELLO_.name());
         else if (packet instanceof UserPacket) dataOutputStream.writeUTF(Type._USER_.name());
-        else if (packet instanceof ConsultPacket) dataOutputStream.writeUTF(Type._CONSULT_.name());
         else if (packet instanceof MachinePacket) dataOutputStream.writeUTF(Type._MACHINE_.name());
+        else if (packet instanceof ConsultPacket) dataOutputStream.writeUTF(Type._CONSULT_.name());
         else dataOutputStream.writeUTF(Type._JOB_.name());
 
         byte[] data = packet.serialize();

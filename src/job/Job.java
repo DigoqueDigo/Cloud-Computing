@@ -50,6 +50,11 @@ public class Job{
     }
 
 
+    public byte[] getData(){
+        return Arrays.copyOf(this.data,this.data.length);
+    }
+
+
     public String toString(){
         StringBuilder buffer = new StringBuilder();
         buffer.append("Tolerance: ").append(this.tolerance);

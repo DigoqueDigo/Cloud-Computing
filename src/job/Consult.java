@@ -6,7 +6,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class Consult{
@@ -29,9 +28,7 @@ public class Consult{
 
     public Consult(int pendingTasks, Map<String,Integer> systemState){
         this.pendingTasks = pendingTasks;
-        this.systemState = systemState.entrySet().stream().collect(Collectors.toMap(
-            x -> x.getKey(),
-            x -> x.getValue()));
+        this.systemState = systemState;
     }
 
 

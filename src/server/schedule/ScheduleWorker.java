@@ -17,15 +17,22 @@ public class ScheduleWorker implements Runnable{
 
     public void run(){
 
-        JobPacket jobPacket;
+        try{
 
-        while ((jobPacket = this.schedule.getJobPacket()) != null){
-            
-            if (this.machineContainer.addJobPacket(jobPacket)){
-                this.schedule.removeJobPacket();
+            JobPacket jobPacket;
+
+            while ((jobPacket = this.schedule.getJobPacket()) != null){
+                
+                if (this.machineContainer.addJobPacket(jobPacket)){
+                    this.schedule.removeJobPacket();
+                }
+
+                else this.schedule.activateAwait();
             }
+        }
 
-            else this.schedule.activateAwait();
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

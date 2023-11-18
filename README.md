@@ -11,3 +11,8 @@ java -cp bin server.Server
 ```bash
 java -cp bin client.user.UserClient <input_folder> <output_folder>
 ```
+
+## Machine
+```bash
+java -cp bin:lib/ client.machine.MachineClient <machine_memory>
+```

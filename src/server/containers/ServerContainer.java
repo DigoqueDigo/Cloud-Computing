@@ -1,4 +1,5 @@
 package server.containers;
+import java.util.Map;
 import client.machine.Machine;
 import client.user.User;
 import packets.JobPacket;
@@ -14,10 +15,11 @@ public class ServerContainer{
     private MachineContainer machineContainer;
 
 
-    public ServerContainer(){
+    public ServerContainer(Schedule schedule, MachineContainer machineContainer){
+        this.schedule = schedule;
+        this.machineContainer = machineContainer;
         this.userContainer = new UserContainer();
         this.resultContainer = new ResultContainer();
-        this.machineContainer = new MachineContainer();
     }
 
     public boolean addUser(User user){
@@ -40,14 +42,24 @@ public class ServerContainer{
         this.schedule.addJobPacket(jobPacket);
     }
 
-    public void removeJobPacket(JobPacket jobPacket){
-        this.machineContainer.removeJobPacket(jobPacket);
+    public Packet getJobPacket(Machine machine){
+        return this.machineContainer.getPacket(machine);
+    }
+
+    public void finalizeJobPacket(JobPacket jobPacket){
+        this.machineContainer.finalizeJobPacket(jobPacket);
         this.schedule.activateSignalAll();
     }
 
-    public boolean addMachine(Machine machine){
-        boolean result = this.machineContainer.addMachine(machine);
-        if (result) this.schedule.activateSignalAll();
-        return result;
+    public void addMachine(Machine machine){
+        this.machineContainer.addMachine(machine);
+    }
+
+    public int getPendingJobs(){
+        return this.machineContainer.getPendingJobs();
+    }
+
+    public Map<String,Integer> getSystemState(){
+        return this.machineContainer.getSystemState();
     }
 }

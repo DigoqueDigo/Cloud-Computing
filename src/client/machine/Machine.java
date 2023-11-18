@@ -8,20 +8,27 @@ import java.io.IOException;
 
 public class Machine{
 
-    private String name;
     private int memory;
     private int availableMemory;
+    private String identifier;
 
 
-    public Machine(String name, int memory){
-        this.name = name;
+    public Machine(int memory){
+        this.identifier = "";
         this.memory = memory;
         this.availableMemory = memory;
     }
 
 
-    public String getName(){
-        return this.name;
+    public Machine(String identifer, int memory){
+        this.identifier = identifer;
+        this.memory = memory;
+        this.availableMemory = memory;
+    }
+
+
+    public String getIdentifier(){
+        return this.identifier;
     }
 
 
@@ -30,29 +37,36 @@ public class Machine{
     }
 
 
-    public void decreaseMemory(int memoryRequired) throws IllegalArgumentException{
-        if (this.availableMemory < memoryRequired) throw new IllegalArgumentException();
-        this.availableMemory -= memoryRequired;
+    public void setIdentifier(String identifier){
+        this.identifier = identifier;
     }
 
     
+    public void decreaseMemory(int memory) throws IllegalArgumentException{
+        if (this.availableMemory < memory) throw new IllegalArgumentException();
+        this.availableMemory -= memory;
+    }
+    
+
+    public void increaseMemory(int memory){
+        this.availableMemory += memory;
+    }
+    
+
     public int hashCode(){
-        return this.name.hashCode();
+        return this.identifier.hashCode();
     }
 
 
     public boolean equals(Object obj){
-
-        if (obj == null || this.getClass() != obj.getClass()) return false;
-        
+        if (obj == null || this.getClass() != obj .getClass()) return false;
         Machine that = (Machine) obj;
-        return this.name.equals(that.getName());
+        return this.identifier.equals(that.getIdentifier());
     }
-
 
     public String toString(){
         StringBuilder buffer = new StringBuilder();
-        buffer.append("Name: ").append(this.name);
+        buffer.append("Nonce: ").append(this.identifier);
         buffer.append("\tMemory: ").append(this.memory);
         buffer.append("\tAvaiable memory: ").append(this.availableMemory);
         return buffer.toString();
@@ -64,7 +78,7 @@ public class Machine{
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
 
-        dataOutputStream.writeUTF(this.name);
+        dataOutputStream.writeUTF(this.identifier);
         dataOutputStream.writeInt(this.memory);
         dataOutputStream.flush();
 
@@ -77,9 +91,9 @@ public class Machine{
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
-        String name = dataInputStream.readUTF();
+        String identifier = dataInputStream.readUTF(); 
         int memory = dataInputStream.readInt();
 
-        return new Machine(name,memory);
+        return new Machine(identifier,memory);
     }
 }

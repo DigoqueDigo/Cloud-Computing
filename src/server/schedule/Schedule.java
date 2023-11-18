@@ -27,8 +27,17 @@ public class Schedule{
         this.jobContainer.set(positionB,jobPacket);
     }
 
+    public void activateSignalAll(){
+        this.condition.signalAll();
+    }
 
-    private void putJob(JobPacket jobPacket){
+
+    public void activateAwait() throws InterruptedException{
+        this.condition.await();
+    }
+
+
+    private void insertJobPacket(JobPacket jobPacket){
 
         this.jobContainer.add(jobPacket);
         int index = this.jobContainer.size() - 1;
@@ -50,12 +59,11 @@ public class Schedule{
 
         try{
             this.lock.lock();
-            this.putJob(jobPacket);
+            this.insertJobPacket(jobPacket);
             this.condition.signalAll();
         }
 
         catch (Exception e) {}
-
         finally {this.lock.unlock();}
     }
 
@@ -74,7 +82,6 @@ public class Schedule{
         }
 
         catch (Exception e) {return null;}
-
         finally {this.lock.unlock();}
     }
 
@@ -87,18 +94,6 @@ public class Schedule{
         }
 
         catch (Exception e) {}
-
         finally {this.lock.unlock();}
-    }
-
-
-    public void activateSignalAll(){
-        this.condition.signalAll();
-    }
-
-
-    public void activateAwait(){
-        try {this.condition.await();}
-        catch (Exception e) {}
     }
 }

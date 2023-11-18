@@ -1,7 +1,10 @@
 package server;
 import java.net.ServerSocket;
 import java.net.Socket;
+import server.containers.MachineContainer;
 import server.containers.ServerContainer;
+import server.schedule.Schedule;
+import server.schedule.ScheduleWorker;
 
 
 public class Server{
@@ -12,11 +15,17 @@ public class Server{
     public static void main(String[] args){
 
         try{
-
-            Socket socket;
-            ServerContainer serverContainer = new ServerContainer();
-            ServerSocket serverSocket = new ServerSocket(ServerDefaultPort);
             
+            Socket socket;
+            ServerSocket serverSocket = new ServerSocket(ServerDefaultPort);
+
+            Schedule schedule = new Schedule();
+            MachineContainer machineContainer = new MachineContainer();
+            ServerContainer serverContainer = new ServerContainer(schedule,machineContainer);
+            ScheduleWorker scheduleWorker = new ScheduleWorker(schedule,machineContainer);
+            
+            new Thread(scheduleWorker).start();
+
             while ((socket = serverSocket.accept()) != null){
                 new Thread(new ServerHandler(socket,serverContainer)).start();
             }
