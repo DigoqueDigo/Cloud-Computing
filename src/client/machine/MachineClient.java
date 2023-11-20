@@ -22,16 +22,17 @@ public class MachineClient{
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 
+            System.out.println(machine);
             MachineClientWorker machineClientWorker = new MachineClientWorker(machine,inBuffer,outBuffer);
             Thread machineReader = new Thread(new SocketToBuffer(inBuffer,inputStream));
             Thread machineWriter = new Thread(new BufferToSocket(outBuffer,outputStream));
 
             machineReader.start();
             machineWriter.start();
+            machineClientWorker.run();
 
             socket.close();
 
-            machineClientWorker.run();
             machineReader.join();
             machineWriter.join();
 

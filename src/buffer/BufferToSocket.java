@@ -22,13 +22,16 @@ public class BufferToSocket implements Runnable{
         try{
 
             Packet packet;
-           Carrier carrier = Carrier.getInstance();
+            Carrier carrier = Carrier.getInstance();
 
             while ((packet = outBuffer.getPacketBlock()) != null){
-               carrier.sendPacket(outputStream,packet);
+                System.out.println("ENVIADO: " + packet);
+                carrier.sendPacket(outputStream,packet);
             }
         }
 
-        catch (Exception e) {}
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

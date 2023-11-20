@@ -29,6 +29,8 @@ public class SocketToBuffer implements Runnable{
             }
         }
 
-        catch (Exception e) {}
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

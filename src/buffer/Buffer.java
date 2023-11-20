@@ -44,8 +44,8 @@ public class Buffer{
                 this.condition.await();
             }
 
-            Packet packet = this.buffer.get(this.buffer.size()-1);
-            this.buffer.remove(this.buffer.size()-1);
+            Packet packet = this.buffer.get(0);
+            this.buffer.remove(0);
             return packet;
         }
 
@@ -63,8 +63,8 @@ public class Buffer{
             this.lock.lock();
 
             if (this.buffer.size() != 0){
-                packet = this.buffer.get(this.buffer.size()-1);
-                this.buffer.remove(this.buffer.size()-1);
+                packet = this.buffer.get(0);
+                this.buffer.remove(0);
             }
 
             return packet;

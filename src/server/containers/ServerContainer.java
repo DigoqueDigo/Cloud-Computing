@@ -43,7 +43,7 @@ public class ServerContainer{
     }
 
     public Packet getJobPacket(Machine machine){
-        return this.machineContainer.getPacket(machine);
+        return this.machineContainer.getJobPacket(machine);
     }
 
     public void finalizeJobPacket(JobPacket jobPacket){
@@ -53,6 +53,7 @@ public class ServerContainer{
 
     public void addMachine(Machine machine){
         this.machineContainer.addMachine(machine);
+        this.schedule.activateSignalAll();
     }
 
     public int getPendingJobs(){
@@ -61,5 +62,13 @@ public class ServerContainer{
 
     public Map<String,Integer> getSystemState(){
         return this.machineContainer.getSystemState();
+    }
+
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("USER CONTAINER:\n").append(this.userContainer.toString()).append("\n\n");
+        buffer.append("MACHINE CONTAINER:\n").append(this.machineContainer.toString()).append("\n\n");
+        buffer.append("RESULT CONTAINER:\n").append(this.resultContainer.toString()).append("\n\n");
+        return buffer.toString();
     }
 }

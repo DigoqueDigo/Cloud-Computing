@@ -39,7 +39,9 @@ public class ServerHandler implements Runnable{
             String nonce = UUID.randomUUID().toString();
             Packet packet = carrier.receivePacket(this.inputStream);
             
+            System.out.println("AAA");
             System.out.println(packet);
+            System.out.println("AAA");
             
             List<Thread> threads = new ArrayList<Thread>();
             

@@ -28,12 +28,26 @@ public class Schedule{
     }
 
     public void activateSignalAll(){
-        this.condition.signalAll();
+        
+        try{
+            this.lock.lock();
+            this.condition.signalAll();
+        }
+
+        catch (Exception e) {}
+        finally {this.lock.unlock();}
     }
 
 
-    public void activateAwait() throws InterruptedException{
-        this.condition.await();
+    public void activateAwait(){
+
+        try{
+            this.lock.lock();
+            this.condition.await();
+        }
+
+        catch (Exception e) {}
+        finally {this.lock.unlock();}
     }
 
 

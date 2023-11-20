@@ -32,11 +32,10 @@ public class ServerMachineWorkerWriter implements Runnable{
             machine.setIdentifier(this.nonce);
 
             while ((packet = this.serverContainer.getJobPacket(machine)) != null){
-
                 carrier.sendPacket(outputStream,packet);
             }
         }
 
-        catch (Exception e){}
+        catch (Exception e) {}
     }
 }

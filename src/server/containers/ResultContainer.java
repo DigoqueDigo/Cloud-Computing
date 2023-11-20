@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+
 import packets.Packet;
 
 
@@ -58,5 +60,17 @@ public class ResultContainer{
         catch (Exception e) {return null;}
 
         finally{this.lock.unlock();}
-    }   
+    } 
+    
+    
+    public String toString(){
+
+        try{
+            this.lock.lock();
+            return this.resultContainer.entrySet().stream().map(x -> x.toString()).collect(Collectors.joining("\n"));
+        }
+
+        catch (Exception e) {return "";}
+        finally {this.lock.unlock();}
+    }
 }

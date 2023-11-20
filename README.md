@@ -14,5 +14,5 @@ java -cp bin client.user.UserClient <input_folder> <output_folder>
 
 ## Machine
 ```bash
-java -cp bin:lib/ client.machine.MachineClient <machine_memory>
+java -cp bin:lib/sd23.jar client.machine.MachineClient <machine_memory>
 ```

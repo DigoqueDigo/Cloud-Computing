@@ -9,7 +9,7 @@ import server.schedule.ScheduleWorker;
 
 public class Server{
 
-    public static final int ServerDefaultPort = 12345;
+    public static final int ServerDefaultPort = 12346;
     public static final String ServerAddrees = "localhost";
 
     public static void main(String[] args){

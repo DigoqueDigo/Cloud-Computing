@@ -30,6 +30,14 @@ public class MachinePacket extends Packet{
     }
 
 
+    public String toString(){
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(super.toString());
+        buffer.append("\nMachine: ").append(this.machine);
+        return buffer.toString();
+    }
+
+
     public byte[] serialize() throws IOException{
 
         byte[] data_machine = this.machine.serialize();

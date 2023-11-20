@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class Consult{
@@ -33,9 +34,15 @@ public class Consult{
 
 
     public String toString(){
+        
         StringBuilder buffer = new StringBuilder();
+        
         buffer.append("Peding Tasks: ").append(this.pendingTasks);
-        buffer.append("\tSystemState: ").append(this.systemState.toString());
+        buffer.append(this.systemState.entrySet()
+            .stream()
+            .map(x -> "Machine: " + x.getKey().toString() + "\tAvailable memory: " + x.getValue().toString())
+            .collect(Collectors.joining("\n","\n","")));
+        
         return buffer.toString();
     }
 

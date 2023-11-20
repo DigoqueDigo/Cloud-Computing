@@ -74,18 +74,13 @@ public class ServerClientWorkerReader implements Runnable{
     }
 
 
-    private void jobCompletedHandler(Packet packet){
-        JobPacket jobPacket = (JobPacket) packet;
-        this.serverContainer.addResultPacket(jobPacket.getClientNonce(),jobPacket);
-    }
-
-
     public void run(){
 
         try{
 
             Packet packet;
             Carrier carrier = Carrier.getInstance();
+            System.out.println(this.serverContainer.toString());
 
             while ((packet = carrier.receivePacket(inputStream)) != null){
 
@@ -107,13 +102,11 @@ public class ServerClientWorkerReader implements Runnable{
                         jobHandler(packet);
                         break;
 
-                    case JOB_COMPLETED:
-                        jobCompletedHandler(packet);
-                        break;
-
                     default:
                         break;
                 }
+                
+                System.out.println(this.serverContainer.toString());
             }
         }
 

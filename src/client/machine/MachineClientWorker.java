@@ -57,8 +57,12 @@ public class MachineClientWorker{
             Packet packetSend = new HelloPacket(Protocol.CONNECT_MACHINE);
             this.outBuffer.addPacket(packetSend);
             
+            System.out.println(packetSend);
+            
             packetSend = new MachinePacket(Protocol.MACHINE_INFO,this.machine);
             outBuffer.addPacket(packetSend);
+
+            System.out.println(packetSend);
 
             while ((packetReceive = inBuffer.getPacketBlock()) != null && (packetReceive.getProtocol() == Protocol.JOB)){
 

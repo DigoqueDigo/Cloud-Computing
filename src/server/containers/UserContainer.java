@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+import java.util.stream.Collectors;
+
 import client.user.User;
 
 
@@ -42,6 +44,18 @@ public class UserContainer{
         }
 
         catch (Exception e) {return null;}
+        finally {this.readLock.unlock();}
+    }
+
+
+    public String toString(){
+
+        try{
+            this.readLock.lock();
+            return this.userContainer.entrySet().stream().map(x -> x.toString()).collect(Collectors.joining("\n"));
+        }
+
+        catch (Exception e) {return "";}
         finally {this.readLock.unlock();}
     }
 }
