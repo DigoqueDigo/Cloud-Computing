@@ -29,6 +29,8 @@ public class ServerClientWorkerWriter implements Runnable{
             while ((packet = serverContainer.getResultPacket(this.nonce)) != null){
                 carrier.sendPacket(outputStream,packet);
             }
+
+            this.serverContainer.removeResultEntry(this.nonce);
         }
 
         catch (Exception e){}

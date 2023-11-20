@@ -38,6 +38,10 @@ public class ServerContainer{
         return this.resultContainer.getResultPacket(nonce);
     }
 
+    public void removeResultEntry(String nonce){
+        this.resultContainer.removeEntry(nonce);
+    }
+
     public void addJobPacket(JobPacket jobPacket){
         this.schedule.addJobPacket(jobPacket);
     }

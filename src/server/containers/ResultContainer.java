@@ -60,7 +60,19 @@ public class ResultContainer{
         catch (Exception e) {return null;}
 
         finally{this.lock.unlock();}
-    } 
+    }
+
+
+    public void removeEntry(String nonce){
+
+        try{
+            this.lock.lock();
+            this.resultContainer.remove(nonce);
+        }
+
+        catch (Exception e) {}
+        finally {this.lock.unlock();}
+    }
     
     
     public String toString(){

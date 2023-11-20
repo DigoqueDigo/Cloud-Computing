@@ -55,6 +55,7 @@ public class ServerMachineWorkerReader implements Runnable{
                         break;
 
                     case JOB:
+                    case ERROR:
                         jobHandler(packet);
                         break;
                 

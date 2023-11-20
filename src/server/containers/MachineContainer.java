@@ -104,6 +104,10 @@ public class MachineContainer{
 
         try{
 
+            System.out.println("---------------------------");
+            System.out.println("FINALIZE" + jobPacket);
+            System.out.println("---------------------------");
+
             this.lock.lock();
             this.machineContainer
                 .keySet()

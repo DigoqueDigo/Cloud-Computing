@@ -1,6 +1,5 @@
 package buffer;
 import java.io.DataInputStream;
-
 import carrier.Carrier;
 import packets.Packet;
 
