@@ -25,7 +25,6 @@ public class BufferToSocket implements Runnable{
             Carrier carrier = Carrier.getInstance();
 
             while ((packet = outBuffer.getPacketBlock()) != null){
-                System.out.println("ENVIADO: " + packet);
                 carrier.sendPacket(outputStream,packet);
             }
         }

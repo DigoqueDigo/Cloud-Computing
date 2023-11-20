@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-
 import job.Job;
 import packets.ConsultPacket;
+import packets.HelloPacket;
 import packets.JobPacket;
 import packets.Packet;
 import packets.UserPacket;
@@ -21,6 +21,7 @@ public class UserClientUI{
     private static final String YELLOW_BOLD = "\033[1;33m";
     private static final String WHITE_BOLD = "\033[1;37m";
     private static final String GREEN_BOLD = "\033[1;32m";
+    private static final String PURPLE_BOLD = "\033[1;35m";
 
     private static UserClientUI singleton = null;
     private BufferedReader input;
@@ -151,12 +152,13 @@ public class UserClientUI{
  
     public Packet getPacket() throws EOFException{
 
-        String option;
+        int option;
         Packet resultPacket = null;
 
         System.out.println(WHITE_BOLD + "1 -> Check server status" + RESET);
         System.out.println(WHITE_BOLD + "2 -> Send task to server" + RESET);
-        System.out.println(WHITE_BOLD + "3 -> Exit program" + RESET);
+        System.out.println(WHITE_BOLD + "3 -> Collect packets" + RESET);
+        System.out.println(WHITE_BOLD + "4 -> Exit program" + RESET);
 
         while (resultPacket == null){
 
@@ -164,13 +166,15 @@ public class UserClientUI{
 
             try{
 
-                option = this.input.readLine();
+                option = Integer.valueOf(this.input.readLine());
 
-                if (Integer.valueOf(option) == 1) resultPacket = new ConsultPacket(Protocol.CONSULT);
+                if (option == 1) resultPacket = new ConsultPacket(Protocol.CONSULT);
 
-                else if (Integer.valueOf(option) == 2) resultPacket = getJobPacket();
+                else if (option == 2) resultPacket = getJobPacket();
 
-                else if (Integer.valueOf(option) == 3) throw new EOFException();
+                else if (option == 3) resultPacket = new HelloPacket(Protocol.ERROR);
+
+                else if (option == 4) throw new EOFException();
 
                 else throw new Exception();
             }
@@ -183,5 +187,24 @@ public class UserClientUI{
         }
 
         return resultPacket;
+    }
+
+
+    public void showPacket(Packet packet){
+
+        switch (packet.getProtocol()) {
+            
+            case ERROR:
+                System.out.println(RED_BOLD + packet.getOptionalMessage() + RESET);
+                break;
+        
+            case CONSULT:
+                ConsultPacket consultPacket = (ConsultPacket) packet;
+                System.out.println(PURPLE_BOLD + consultPacket.getConsult().toString() + RESET);
+                break;
+
+            default:
+                break;
+        }
     }
 }

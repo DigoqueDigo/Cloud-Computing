@@ -31,6 +31,11 @@ public class ConsultPacket extends Packet{
     }
 
 
+    public Consult getConsult(){
+        return this.consult;
+    }
+
+
     public String toString(){
         StringBuilder buffer = new StringBuilder();
         buffer.append(super.toString());

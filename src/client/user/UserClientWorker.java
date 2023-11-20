@@ -43,12 +43,15 @@ public class UserClientWorker{
             }
 
             while ((packetSend = this.clientUI.getPacket()) != null){
-                
-                this.outBuffer.addPacket(packetSend);
-                System.out.println("Send Packet: " + packetSend);
 
-                packetReceive = this.inBuffer.getPacketNonBlock();
-                System.out.println("Receive Packet: " + packetReceive);
+                if (packetSend.getProtocol() == Protocol.ERROR){
+                    
+                    while ((packetReceive = this.inBuffer.getPacketNonBlock()) != null){
+                        this.clientUI.showPacket(packetReceive);
+                    }
+                }
+                
+                else this.outBuffer.addPacket(packetSend);
             }
         }
 
