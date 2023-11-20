@@ -68,9 +68,20 @@ public class ServerClientWorkerReader implements Runnable{
 
 
     private void jobHandler(Packet packet){
+        
         JobPacket jobPacket = (JobPacket) packet;
         jobPacket.setClientNonce(this.nonce);
-        this.serverContainer.addJobPacket(jobPacket);
+        
+        if (jobPacket.getJob().getMemory() > this.serverContainer.getMaxMemory()){
+            this.serverContainer.addResultPacket(
+                this.nonce,
+                new JobPacket(
+                    Protocol.ERROR,
+                    "No machine can perform the job: " + jobPacket.getJob().getIdentifier(),
+                    jobPacket.getJob()));
+        }
+
+        else this.serverContainer.addJobPacket(jobPacket);
     }
 
 
@@ -105,7 +116,7 @@ public class ServerClientWorkerReader implements Runnable{
                     default:
                         break;
                 }
-                
+
                 System.out.println(this.serverContainer.toString());
             }
         }

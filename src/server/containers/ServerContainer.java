@@ -56,6 +56,10 @@ public class ServerContainer{
         this.schedule.activateSignalAll();
     }
 
+    public int getMaxMemory(){
+        return this.machineContainer.getMaxMemory();
+    }
+
     public int getPendingJobs(){
         return this.machineContainer.getPendingJobs();
     }

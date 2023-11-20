@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.UUID;
 import carrier.Reader;
 
 
@@ -13,30 +14,30 @@ public class Job{
     private int tolerance;
     private int memory;
     private byte[] data;
-    private String result;
+    private String identifier;
 
 
     public Job(int tolerance, int memory, byte[] data){
         this.memory = memory;
         this.tolerance = tolerance;
         this.data = Arrays.copyOf(data,data.length);
-        this.result = "";
+        this.identifier = UUID.randomUUID().toString();
     }
 
 
-    public Job(byte[] data, String result){
+    public Job(byte[] data, String identifier){
         this.memory = 0;
         this.tolerance = 0;
         this.data = Arrays.copyOf(data,data.length);
-        this.result = result;
+        this.identifier = identifier;
     }
 
 
-    public Job(int tolerance, int memory, byte[] data, String result){
+    public Job(int tolerance, int memory, byte[] data, String identifier){
         this.memory = memory;
         this.tolerance = tolerance;
         this.data = Arrays.copyOf(data,data.length);
-        this.result = result;
+        this.identifier = identifier;
     }
 
 
@@ -55,12 +56,22 @@ public class Job{
     }
 
 
+    public String getIdentifier(){
+        return this.identifier;
+    }
+
+
+    public void setIdentifier(String identifier){
+        this.identifier = identifier;
+    }
+
+
     public String toString(){
         StringBuilder buffer = new StringBuilder();
         buffer.append("Tolerance: ").append(this.tolerance);
         buffer.append("\tMemory: ").append(this.memory);
         buffer.append("\tData size: ").append(this.data.length);
-        buffer.append("\tResult: ").append(this.result);
+        buffer.append("\tID: ").append(this.identifier);
         return buffer.toString();
     }
     
@@ -72,9 +83,9 @@ public class Job{
 
         dataOutputStream.writeInt(this.tolerance);
         dataOutputStream.writeInt(this.memory);
+        dataOutputStream.writeUTF(this.identifier);
         dataOutputStream.writeInt(this.data.length);
         dataOutputStream.write(this.data);
-        dataOutputStream.writeUTF(this.result);
         dataOutputStream.flush();
 
         return byteArrayOutputStream.toByteArray();
@@ -88,10 +99,10 @@ public class Job{
 
         int tolerance = dataInputStream.readInt();
         int memory = dataInputStream.readInt();
+        String identifier = dataInputStream.readUTF();
         byte[] data = new byte[dataInputStream.readInt()];
         Reader.read(dataInputStream,data,data.length);
-        String result = dataInputStream.readUTF();
 
-        return new Job(tolerance,memory,data,result);
+        return new Job(tolerance,memory,data,identifier);
     }
 }

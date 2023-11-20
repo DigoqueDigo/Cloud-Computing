@@ -26,7 +26,7 @@ public class UserClientWorker{
         try{
             
             Packet packetReceive = null;
-            Packet packetSend = new HelloPacket(Protocol.CONNECT_USER); // envia o pacote a dizer que é um client
+            Packet packetSend = new HelloPacket(Protocol.CONNECT_USER);
 
             this.clientUI.checkFolders(UserClient.INPUT_FOLDER,UserClient.OUTPUT_FOLDER);
             this.outBuffer.addPacket(packetSend);
@@ -34,11 +34,11 @@ public class UserClientWorker{
 
             while (packetReceive == null || packetReceive.getProtocol() == Protocol.ERROR){
 
-                packetSend = this.clientUI.getUserPacket(); // prepara o pacote de autenticação ou login
+                packetSend = this.clientUI.getUserPacket();
                 this.outBuffer.addPacket(packetSend);
     
-                packetReceive = this.inBuffer.getPacketBlock(); // a receber a resposta do servidor
-                this.clientUI.showPacketMessage(packetReceive); // a mostrar a mensage enviada pelo servidor
+                packetReceive = this.inBuffer.getPacketBlock();
+                this.clientUI.showPacketMessage(packetReceive);
                 System.out.println(packetReceive);
             }
 
@@ -51,7 +51,10 @@ public class UserClientWorker{
                     }
                 }
                 
-                else this.outBuffer.addPacket(packetSend);
+                else{
+                    if (packetSend.getProtocol() == Protocol.JOB) this.clientUI.showPacket(packetSend);
+                    this.outBuffer.addPacket(packetSend);
+                }
             }
         }
 

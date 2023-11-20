@@ -143,6 +143,18 @@ public class MachineContainer{
     }
 
 
+    public int getMaxMemory(){
+
+        try{
+            this.lock.lock();
+            return this.machineContainer.keySet().stream().mapToInt(x -> x.getMemory()).max().orElse(-1);
+        }
+
+        catch (Exception e) {return -1;}
+        finally {this.lock.unlock();}
+    }
+
+
     public String toString(){
         
         try{

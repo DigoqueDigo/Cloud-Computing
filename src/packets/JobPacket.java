@@ -23,6 +23,14 @@ public class JobPacket extends Packet{
     }
 
 
+    public JobPacket(Protocol protocol, String optionalMessage, Job job){
+        super(protocol,optionalMessage);
+        this.job = job;
+        this.clientNonce = "";
+        this.machineNonce = "";
+    }
+
+
     public JobPacket(Protocol protocol, String optionalMessage, Job job, String clientNonce, String machineNonce){
         super(protocol,optionalMessage);
         this.job = job;

@@ -32,6 +32,11 @@ public class Machine{
     }
 
 
+    public int getMemory(){
+        return this.memory;
+    }
+
+
     public int getAvaiableMemory(){
         return this.availableMemory;
     }

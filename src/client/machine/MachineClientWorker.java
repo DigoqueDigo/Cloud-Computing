@@ -32,16 +32,19 @@ public class MachineClientWorker{
 
         try{
             byte[] output = JobFunction.execute(jobPacket.getJob().getData());
-            message = "Success, returned " + output.length + " bytes";
-            job = new Job(output,message); 
+            message = "Success job: " + jobPacket.getJob().getIdentifier();
+            message += " (returned " + output.length + " bytes)";
+            job = new Job(output,jobPacket.getJob().getIdentifier());
+            result = new JobPacket(Protocol.JOB,message,job);
         }
 
-        catch (JobFunctionException e){   
-            message = "Job failed: code = " + e.getCode() + " message = " + e.getMessage();
-            job = new Job(new byte[0],message);
+        catch (JobFunctionException e){ 
+            message = "Job failed: " + jobPacket.getJob().getIdentifier(); 
+            message += " (code = " + e.getCode() + " message = " + e.getMessage() + ")";
+            job = new Job(new byte[0],jobPacket.getJob().getIdentifier());
+            result = new JobPacket(Protocol.ERROR,message,job);
         }
 
-        result = new JobPacket(Protocol.JOB_COMPLETED,job);
         result.setClientNonce(jobPacket.getClientNonce());
         result.setMachineNonce(jobPacket.getMachineNonce());
         

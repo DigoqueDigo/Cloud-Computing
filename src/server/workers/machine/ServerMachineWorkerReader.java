@@ -46,7 +46,7 @@ public class ServerMachineWorkerReader implements Runnable{
 
             while ((packet = carrier.receivePacket(inputStream)) != null){
 
-                System.out.println(packet);
+                System.out.println("Machine Reader: " + packet);
 
                 switch (packet.getProtocol()){
 
@@ -54,7 +54,7 @@ public class ServerMachineWorkerReader implements Runnable{
                         registerHandler(packet);
                         break;
 
-                    case JOB_COMPLETED:
+                    case JOB:
                         jobHandler(packet);
                         break;
                 

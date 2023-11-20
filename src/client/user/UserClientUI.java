@@ -134,7 +134,7 @@ public class UserClientUI{
                 job_data = Files.readAllBytes(file.toPath());
                 
                 Job job = new Job(tolerance,memory,job_data);
-                resutlPacket = new JobPacket(Protocol.JOB,job);
+                resutlPacket = new JobPacket(Protocol.JOB,"Job submitted: " + job.getIdentifier(),job);
             }
 
             catch (FileNotFoundException e){
@@ -202,6 +202,10 @@ public class UserClientUI{
                 ConsultPacket consultPacket = (ConsultPacket) packet;
                 System.out.println(PURPLE_BOLD + consultPacket.getConsult().toString() + RESET);
                 break;
+
+            case JOB:
+                JobPacket jobPacket = (JobPacket) packet;
+                System.out.println(PURPLE_BOLD + jobPacket.getOptionalMessage() + RESET);
 
             default:
                 break;
