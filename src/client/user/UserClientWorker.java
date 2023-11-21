@@ -23,6 +23,15 @@ public class UserClientWorker{
     }
 
 
+    private void collectPackets(){        
+        Packet packetReceive;   
+        while ((packetReceive = this.inBuffer.getPacketNonBlock()) != null){   
+            this.clientUI.showPacket(packetReceive);
+            if (packetReceive.getProtocol() == Protocol.JOB) this.jobBuffer.addPacket(packetReceive);
+        }
+    }
+
+
     public void run(){
 
         try{
@@ -46,13 +55,7 @@ public class UserClientWorker{
 
             while ((packetSend = this.clientUI.getPacket()) != null){
 
-                if (packetSend.getProtocol() == Protocol.ERROR){
-                    
-                    while ((packetReceive = this.inBuffer.getPacketNonBlock()) != null){   
-                        this.clientUI.showPacket(packetReceive);
-                        if (packetReceive.getProtocol() == Protocol.JOB) this.jobBuffer.addPacket(packetReceive);
-                    }
-                }
+                if (packetSend.getProtocol() == Protocol.ERROR) collectPackets();
                 
                 else{
                     this.outBuffer.addPacket(packetSend);
@@ -62,6 +65,7 @@ public class UserClientWorker{
         }
 
         catch (EOFException e){
+            collectPackets();
             this.outBuffer.addPacket(null);
             this.jobBuffer.addPacket(null);
         }

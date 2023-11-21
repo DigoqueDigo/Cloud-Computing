@@ -1,6 +1,5 @@
 package server.workers.machine;
 import java.io.DataOutputStream;
-
 import carrier.Carrier;
 import client.machine.Machine;
 import packets.Packet;
