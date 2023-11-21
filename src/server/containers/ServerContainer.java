@@ -65,7 +65,7 @@ public class ServerContainer{
     }
 
     public int getPendingJobs(){
-        return this.machineContainer.getPendingJobs();
+        return this.schedule.size();
     }
 
     public Map<String,Integer> getSystemState(){

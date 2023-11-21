@@ -61,6 +61,11 @@ public class Job{
     }
 
 
+    public void decreaseTolerance(){
+        this.tolerance--;
+    }
+
+
     public void setIdentifier(String identifier){
         this.identifier = identifier;
     }

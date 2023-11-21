@@ -121,18 +121,6 @@ public class MachineContainer{
     }
 
 
-    public int getPendingJobs(){
-        
-        try{
-            this.lock.lock();
-            return this.machineContainer.values().stream().mapToInt(x -> x.size()).sum();
-        }
-
-        catch (Exception e) {return -1;}
-        finally {this.lock.unlock();}
-    }
-
-
     public Map<String,Integer> getSystemState(){
 
         try{

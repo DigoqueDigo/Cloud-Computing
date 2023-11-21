@@ -11,14 +11,14 @@ public class UserClientWorker{
 
     private Buffer inBuffer;
     private Buffer outBuffer;
-    private Buffer joBuffer;
+    private Buffer jobBuffer;
     private UserClientUI clientUI;
 
 
     public UserClientWorker(Buffer inBuffer, Buffer outBuffer, Buffer jobBuffer){
         this.inBuffer = inBuffer;
         this.outBuffer = outBuffer;
-        this.joBuffer = jobBuffer;
+        this.jobBuffer = jobBuffer;
         this.clientUI = UserClientUI.getInstance();
     }
 
@@ -50,7 +50,7 @@ public class UserClientWorker{
                     
                     while ((packetReceive = this.inBuffer.getPacketNonBlock()) != null){   
                         this.clientUI.showPacket(packetReceive);
-                        if (packetReceive.getProtocol() == Protocol.JOB) this.joBuffer.addPacket(packetReceive);
+                        if (packetReceive.getProtocol() == Protocol.JOB) this.jobBuffer.addPacket(packetReceive);
                     }
                 }
                 
@@ -63,13 +63,13 @@ public class UserClientWorker{
 
         catch (EOFException e){
             this.outBuffer.addPacket(null);
-            this.joBuffer.addPacket(null);
+            this.jobBuffer.addPacket(null);
         }
 
         catch (FileNotFoundException e){
             this.clientUI.showInvalidFolder();
             this.outBuffer.addPacket(null);
-            this.joBuffer.addPacket(null);
+            this.jobBuffer.addPacket(null);
         }
     }
 }

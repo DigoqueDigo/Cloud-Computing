@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 import job.Job;
 import packets.JobPacket;
 
@@ -64,6 +65,7 @@ public class Schedule{
             if (currentJob.getMemory() > previousJob.getMemory()) break;
 
             swapJobPacket(index-1,index);
+            previousJob.decreaseTolerance();
             index--;
         }
     }
@@ -108,6 +110,33 @@ public class Schedule{
         }
 
         catch (Exception e) {}
+        finally {this.lock.unlock();}
+    }
+
+
+    public int size(){
+        
+        try{
+            this.lock.lock();
+            return this.jobContainer.size();
+        }
+
+        catch (Exception e) {return 0;}
+        finally {this.lock.unlock();}
+    }
+
+
+    public String toString(){
+
+        try{
+            this.lock.lock();
+            StringBuilder buffer = new StringBuilder();
+            buffer.append("SCHEDULE");
+            buffer.append(this.jobContainer.stream().map(x -> x.toString()).collect(Collectors.joining("\n","\n","\n")));
+            return buffer.toString();
+        }
+
+        catch (Exception e) {return "";}
         finally {this.lock.unlock();}
     }
 }
