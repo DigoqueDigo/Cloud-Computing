@@ -112,6 +112,8 @@ public class MachineContainer{
                 .stream()
                 .filter(x -> x.getIdentifier().equals(jobPacket.getMachineNonce()))
                 .forEach(x -> x.increaseMemory(jobPacket.getJob().getMemory()));
+
+                System.out.println(this);
         }
 
         catch (Exception e) {}

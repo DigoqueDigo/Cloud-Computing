@@ -43,9 +43,6 @@ public class MachineClientExecutor implements Runnable{
             result = new JobPacket(Protocol.ERROR,message,job);
         }
 
-        try {Thread.sleep(60000);}
-        catch (Exception e) {}
-
         result.setClientNonce(jobPacket.getClientNonce());
         result.setMachineNonce(jobPacket.getMachineNonce());
         this.outBuffer.addPacket(result);
