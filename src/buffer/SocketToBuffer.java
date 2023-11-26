@@ -1,5 +1,6 @@
 package buffer;
 import java.io.DataInputStream;
+import java.net.SocketException;
 import carrier.Carrier;
 import packets.Packet;
 
@@ -27,6 +28,8 @@ public class SocketToBuffer implements Runnable{
                 this.inBuffer.addPacket(packet);
             }
         }
+
+        catch (SocketException e) {}
 
         catch (Exception e){
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package server.workers.client;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.util.Map;
 import carrier.Carrier;
 import client.user.User;
@@ -118,9 +119,12 @@ public class ServerClientWorkerReader implements Runnable{
             }
         }
 
+        catch (EOFException e){
+            this.serverContainer.addResultPacket(nonce,null);
+        }
+
         catch (Exception e){
             e.printStackTrace();
-            this.serverContainer.addResultPacket(nonce,null);
         }
     }
 }
