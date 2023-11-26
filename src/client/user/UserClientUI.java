@@ -58,6 +58,13 @@ public class UserClientUI{
     }
 
 
+    private int checkInteger(String number) throws Exception{
+        int result = Integer.valueOf(number);
+        if (result < 0) throw new Exception();
+        return result;
+    }
+
+
     public Packet getUserPacket() throws EOFException{
 
         User user = null;
@@ -119,10 +126,10 @@ public class UserClientUI{
             try{
 
                 System.out.print(YELLOW_BOLD + "Enter task tolerance: " + RESET);
-                tolerance = Integer.valueOf(this.input.readLine());
+                tolerance = checkInteger(this.input.readLine());
 
                 System.out.print(YELLOW_BOLD + "Enter necessary memory: " + RESET);
-                memory = Integer.valueOf(this.input.readLine());
+                memory = checkInteger(this.input.readLine());
 
                 System.out.print(YELLOW_BOLD + "Enter task file: " + RESET);
                 filename = this.input.readLine();

@@ -42,11 +42,8 @@ public class ServerMachineWorkerReader implements Runnable{
 
             Packet packet;
             Carrier carrier = Carrier.getInstance();
-            System.out.println(this.serverContainer.toString());
 
             while ((packet = carrier.receivePacket(inputStream)) != null){
-
-                System.out.println("Machine Reader: " + packet);
 
                 switch (packet.getProtocol()){
 
@@ -62,8 +59,6 @@ public class ServerMachineWorkerReader implements Runnable{
                     default:
                         break;
                 }
-
-                System.out.println(this.serverContainer.toString());
             }
         }
 

@@ -24,6 +24,8 @@ public class MachineClientExecutor implements Runnable{
         String message;
         JobPacket result;
         Job job = jobPacket.getJob();
+        
+        System.out.print("Job: " + job.getIdentifier() + " -> ");
 
         try{
             byte[] output = JobFunction.execute(jobPacket.getJob().getData());
@@ -33,7 +35,8 @@ public class MachineClientExecutor implements Runnable{
             result = new JobPacket(Protocol.JOB,message,job);
         }
 
-        catch (JobFunctionException e){ 
+        catch (JobFunctionException e){
+            System.out.println("Fail");
             message = "Job failed: " + jobPacket.getJob().getIdentifier(); 
             message += " (code = " + e.getCode() + " message = " + e.getMessage() + ")";
             job = new Job(job.getTolerance(),job.getMemory(),new byte[0],job.getIdentifier());
@@ -42,8 +45,6 @@ public class MachineClientExecutor implements Runnable{
 
         try {Thread.sleep(60000);}
         catch (Exception e) {}
-
-        System.out.println("ENVIADO");
 
         result.setClientNonce(jobPacket.getClientNonce());
         result.setMachineNonce(jobPacket.getMachineNonce());

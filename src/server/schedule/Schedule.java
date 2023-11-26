@@ -129,10 +129,20 @@ public class Schedule{
     public String toString(){
 
         try{
+            
             this.lock.lock();
             StringBuilder buffer = new StringBuilder();
-            buffer.append("SCHEDULE");
-            buffer.append(this.jobContainer.stream().map(x -> x.toString()).collect(Collectors.joining("\n","\n","\n")));
+            
+            buffer.append("----------------------------------------------------------------------------------------------------\n");
+
+            if (this.jobContainer.size() > 0){
+                buffer.append(this.jobContainer
+                    .stream()
+                    .map(x -> x.toString())
+                    .collect(Collectors.joining("\n","","\n")));
+            }
+
+            buffer.append("----------------------------------------------------------------------------------------------------\n");
             return buffer.toString();
         }
 

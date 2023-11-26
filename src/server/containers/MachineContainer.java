@@ -46,6 +46,7 @@ public class MachineContainer{
         try{
             this.lock.lock();
             this.machineContainer.putIfAbsent(machine,new ArrayList<JobPacket>());
+            System.out.println(this);
         }
 
         catch (Exception e) {}
@@ -67,6 +68,8 @@ public class MachineContainer{
                 
                 this.machineContainer.get(machine).add(jobPacket);
                 this.condition.signalAll();
+                
+                System.out.println(this);
             }
             
             return machine != null;
@@ -103,11 +106,6 @@ public class MachineContainer{
     public void finalizeJobPacket(JobPacket jobPacket){
 
         try{
-
-            System.out.println("---------------------------");
-            System.out.println("FINALIZE" + jobPacket);
-            System.out.println("---------------------------");
-
             this.lock.lock();
             this.machineContainer
                 .keySet()
@@ -148,10 +146,24 @@ public class MachineContainer{
 
 
     public String toString(){
-        
+
         try{
+
             this.lock.lock();
-            return this.machineContainer.entrySet().stream().map(x -> x.toString()).collect(Collectors.joining("\n"));
+            StringBuilder buffer = new StringBuilder();
+
+            buffer.append("----------------------------------------------------------------------------------------------------\n");            
+
+            if (this.machineContainer.size() > 0){
+                buffer.append(this.machineContainer
+                    .keySet()
+                    .stream()
+                    .map(x -> x.toString())
+                    .collect(Collectors.joining("\n","","\n")));
+            }
+
+            buffer.append("----------------------------------------------------------------------------------------------------\n");  
+            return buffer.toString();
         }
 
         catch (Exception e) {return "";}

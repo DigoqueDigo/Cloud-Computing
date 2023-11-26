@@ -34,15 +34,20 @@ public class Consult{
 
 
     public String toString(){
-        
+
         StringBuilder buffer = new StringBuilder();
-        
+
         buffer.append("Peding Tasks: ").append(this.pendingTasks);
-        buffer.append(this.systemState.entrySet()
-            .stream()
-            .map(x -> "Machine: " + x.getKey().toString() + "\tAvailable memory: " + x.getValue().toString())
-            .collect(Collectors.joining("\n","\n","")));
-        
+
+        if (this.systemState.size() > 0){
+            buffer.append(this.systemState
+                .entrySet()
+                .stream()
+                .map(x -> "Machine: " + x.getKey().toString() + "\tAvailable memory: " + x.getValue().toString())
+                .collect(Collectors.joining("\n","\n","")));
+        }
+
+        else buffer.append("\nNo machines in the system");
         return buffer.toString();
     }
 
@@ -63,7 +68,7 @@ public class Consult{
         dataOutputStream.flush();
         return byteArrayOutputStream.toByteArray();
     }
-    
+
 
     public static Consult deserialize(byte[] dataConsult) throws IOException{
 
@@ -81,5 +86,5 @@ public class Consult{
         }
 
         return new Consult(pendingTasks,systemState);
-    }   
+    }
 }

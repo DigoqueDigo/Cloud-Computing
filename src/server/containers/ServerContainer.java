@@ -71,12 +71,4 @@ public class ServerContainer{
     public Map<String,Integer> getSystemState(){
         return this.machineContainer.getSystemState();
     }
-
-    public String toString(){
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("USER CONTAINER:\n").append(this.userContainer.toString()).append("\n\n");
-        buffer.append("MACHINE CONTAINER:\n").append(this.machineContainer.toString()).append("\n\n");
-        buffer.append("RESULT CONTAINER:\n").append(this.resultContainer.toString()).append("\n\n");
-        return buffer.toString();
-    }
 }

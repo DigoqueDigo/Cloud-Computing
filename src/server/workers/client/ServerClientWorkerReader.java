@@ -91,7 +91,6 @@ public class ServerClientWorkerReader implements Runnable{
 
             Packet packet;
             Carrier carrier = Carrier.getInstance();
-            System.out.println(this.serverContainer.toString());
 
             while ((packet = carrier.receivePacket(inputStream)) != null){
 
@@ -116,8 +115,6 @@ public class ServerClientWorkerReader implements Runnable{
                     default:
                         break;
                 }
-
-                System.out.println(this.serverContainer.toString());
             }
         }
 

@@ -73,10 +73,10 @@ public class Job{
 
     public String toString(){
         StringBuilder buffer = new StringBuilder();
-        buffer.append("Tolerance: ").append(this.tolerance);
+        buffer.append("ID: ").append(this.identifier);
+        buffer.append("\tTolerance: ").append(this.tolerance);
         buffer.append("\tMemory: ").append(this.memory);
         buffer.append("\tData size: ").append(this.data.length);
-        buffer.append("\tID: ").append(this.identifier);
         return buffer.toString();
     }
     

@@ -22,7 +22,6 @@ public class MachineClient{
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 
-            System.out.println(machine);
             MachineClientWorker machineClientWorker = new MachineClientWorker(machine,inBuffer,outBuffer);
             Thread machineReader = new Thread(new SocketToBuffer(inBuffer,inputStream));
             Thread machineWriter = new Thread(new BufferToSocket(outBuffer,outputStream));
@@ -35,8 +34,6 @@ public class MachineClient{
 
             machineReader.join();
             machineWriter.join();
-
-            System.out.println("Machine disconnected");
         }
 
         catch (Exception e) {}

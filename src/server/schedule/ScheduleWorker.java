@@ -21,12 +21,10 @@ public class ScheduleWorker implements Runnable{
 
             JobPacket jobPacket;
 
-            System.out.println(this.schedule);
-
             while ((jobPacket = this.schedule.getJobPacket()) != null){
 
                 System.out.println(this.schedule);
-                
+
                 if (this.machineContainer.addJobPacket(jobPacket)){
                     this.schedule.removeJobPacket();
                     System.out.println(this.schedule);

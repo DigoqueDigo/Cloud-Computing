@@ -41,7 +41,6 @@ public class UserClientWorker{
 
             this.clientUI.checkFolders(UserClient.INPUT_FOLDER,UserClient.OUTPUT_FOLDER);
             this.outBuffer.addPacket(packetSend);
-            System.out.println(packetSend);
 
             while (packetReceive == null || packetReceive.getProtocol() == Protocol.ERROR){
 
@@ -50,7 +49,6 @@ public class UserClientWorker{
     
                 packetReceive = this.inBuffer.getPacketBlock();
                 this.clientUI.showPacketMessage(packetReceive);
-                System.out.println(packetReceive);
             }
 
             while ((packetSend = this.clientUI.getPacket()) != null){

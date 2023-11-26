@@ -65,12 +65,7 @@ public class JobPacket extends Packet{
 
 
     public String toString(){
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(super.toString());
-        buffer.append(("\nClientNonce: ")).append(this.clientNonce);
-        buffer.append("\nMachineNonce: ").append(this.machineNonce);
-        buffer.append("\nJob: ").append(this.job.toString());
-        return buffer.toString();
+        return this.job.toString();
     }
 
 

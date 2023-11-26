@@ -13,7 +13,8 @@ public class Machine{
     private String identifier;
 
 
-    public Machine(int memory){
+    public Machine(int memory) throws Exception{
+        if (memory < 0) throw new Exception();
         this.identifier = "";
         this.memory = memory;
         this.availableMemory = memory;
