@@ -37,7 +37,7 @@ public class Consult{
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append("Peding Tasks: ").append(this.pendingTasks);
+        buffer.append("Pending Tasks: ").append(this.pendingTasks);
 
         if (this.systemState.size() > 0){
             buffer.append(this.systemState
